@@ -23,7 +23,7 @@ func init() {
 		apiV1Group.DELETE("/user", uctl.Destroy)
 
 		apiV1Group.GET("/clientctl", clientctl.OperateDeploy)
-		apiV1Group.GET("/clientctl2", clientctl.GetPod)
+		apiV1Group.PUT("/clientctl2", clientctl.GetPod)
 		//apiV1Group.DELETE("/user", clientctl.Destroy)
 	}
 }
