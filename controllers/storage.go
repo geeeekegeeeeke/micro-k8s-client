@@ -11,11 +11,11 @@ import (
 	"path/filepath"
 )
 
-type NodeController struct {
+type StorageController struct {
 	Base *BaseController
 }
 
-func (this *NodeController) ListNode(c *gin.Context) {
+func (this *StorageController) ListPersistent(c *gin.Context) {
 	defer this.Base.Catch(NewResponse(c))
 	// kubernetesの設定ファイルのパスを組み立てる
 	kubeconfig := filepath.Join(os.Getenv("HOME"), ".kube", "config")
@@ -35,16 +35,15 @@ func (this *NodeController) ListNode(c *gin.Context) {
 	}
 
 	// https://godoc.org/k8s.io/client-go/kubernetes/typed/core/v1
-	nodes, err := clientset.CoreV1().Nodes().List(metav1.ListOptions{})
+	pvs, err := clientset.CoreV1().PersistentVolumes().List(metav1.ListOptions{})
 	if err != nil {
-		log.Fatalln("failed to get nodes:", err)
+		log.Fatalln("failed to get persistent volumes:", err)
 	}
-
-	for i, node := range nodes.Items {
-		fmt.Printf("[%d] %s\n", i, node.GetName())
+	for i, pv := range pvs.Items {
+		fmt.Printf("[%d] %s\n", i, pv.GetName())
 	}
 }
-func (this *NodeController) GetNodeInfo(c *gin.Context) {
+func (this *StorageController) ListPersistentVol(c *gin.Context) {
 	defer this.Base.Catch(NewResponse(c))
 	// kubernetesの設定ファイルのパスを組み立てる
 	kubeconfig := filepath.Join(os.Getenv("HOME"), ".kube", "config")
@@ -55,6 +54,7 @@ func (this *NodeController) GetNodeInfo(c *gin.Context) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	// NewForConfig creates a new Clientset for the given config.
 	// https://godoc.org/k8s.io/client-go/kubernetes#NewForConfig
 	clientset, err := kubernetes.NewForConfig(config)
@@ -62,22 +62,12 @@ func (this *NodeController) GetNodeInfo(c *gin.Context) {
 		log.Fatal(err)
 	}
 
-	//获取 指定NODE 的详细信息
-	fmt.Println("\n ####### node详细信息 ######")
-	nodeName := "k8s-master2"
-	nodeRel, err := clientset.CoreV1().Nodes().Get(nodeName, metav1.GetOptions{})
+	// https://godoc.org/k8s.io/client-go/kubernetes/typed/core/v1
+	pvcs, err := clientset.CoreV1().PersistentVolumeClaims("").List(metav1.ListOptions{})
 	if err != nil {
-		panic(err)
+		log.Fatalln("failed to get persistent volume claim:", err)
 	}
-	fmt.Printf("Name: %s \n", nodeRel.Name)
-	fmt.Printf("CreateTime: %s \n", nodeRel.CreationTimestamp)
-	fmt.Printf("NowTime: %s \n", nodeRel.Status.Conditions[0].LastHeartbeatTime)
-	fmt.Printf("kernelVersion: %s \n", nodeRel.Status.NodeInfo.KernelVersion)
-	fmt.Printf("SystemOs: %s \n", nodeRel.Status.NodeInfo.OSImage)
-	fmt.Printf("Cpu: %s \n", nodeRel.Status.Capacity.Cpu())
-	fmt.Printf("docker: %s \n", nodeRel.Status.NodeInfo.ContainerRuntimeVersion)
-	// fmt.Printf("Status: %s \n", nodeRel.Status.Conditions[len(nodes.Items[0].Status.Conditions)-1].Type)
-	fmt.Printf("Status: %s \n", nodeRel.Status.Conditions[len(nodeRel.Status.Conditions)-1].Type)
-	fmt.Printf("Mem: %s \n", nodeRel.Status.Allocatable.Memory().String())
-
+	for i, pvc := range pvcs.Items {
+		fmt.Printf("[%d] %s\n", i, pvc.GetName())
+	}
 }
