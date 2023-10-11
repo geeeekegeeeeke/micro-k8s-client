@@ -15,6 +15,7 @@ import (
 	"k8s.io/client-go/util/retry"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 type ClientController struct {
@@ -308,7 +309,7 @@ func prompt() {
 
 }
 
-func (this *ClientController) GetPod(c *gin.Context) {
+func (this *ClientController) GetNode(c *gin.Context) {
 	defer this.Base.Catch(NewResponse(c))
 	//获取NODE
 	fmt.Println("####### 获取node ######")
@@ -324,5 +325,56 @@ func (this *ClientController) GetPod(c *gin.Context) {
 	fmt.Println("\n ####### node详细信息 ######")
 	//nodeName := "k8s-master2"
 	//nodeRel, err := clientset.CoreV1().Nodes().Get(nodeName, metav1.GetOptions{})
+
+}
+func (this *ClientController) GetPod(c *gin.Context) {
+	fmt.Println("liuyucaho  router list get ")
+	var kubeconfig *string
+	if home, _ := os.Getwd(); home != "" {
+		kubeconfig = flag.String("kubeconfig", filepath.Join(home, "conf", "kubeconfig"), "(optional) absolute path to the kubeconfig file")
+	} else {
+		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
+	}
+	flag.Parse()
+
+	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+	if err != nil {
+		panic(err)
+	}
+	//client, err := dynamic.NewForConfig(config)
+	if err != nil {
+		panic(err)
+	}
+
+	/// 使用k8s.io/client-go/kubernetes生成一个ClientSet的客户端
+	// 客户端生成后，就可以使用这个客户端与k8s API server进行交互，如Create/Retrieve/Update/Delete Resource
+	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	for {
+		// 通过实现 clientset 的 CoreV1Interface 接口列表中的 PodsGetter 接口方法 Pods(namespace string)返回 PodInterface
+		// PodInterface 接口拥有操作 Pod 资源的方法，例如 Create、Update、Get、List 等方法
+		// 注意：Pods() 方法中 namespace 不指定则获取 Cluster 所有 Pod 列表
+		pods, err := clientset.CoreV1().Pods("").List(metav1.ListOptions{})
+		if err != nil {
+			panic(err.Error())
+		}
+		fmt.Printf("There are %d pods in the k8s cluster\n", len(pods.Items))
+
+		// 获取指定namespace中的pod列表信息
+		namespace := "default"
+		pods, err = clientset.CoreV1().Pods(namespace).List(metav1.ListOptions{})
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("There are %d pods in the namespace %s\n", len(pods.Items), namespace)
+		for _, pod := range pods.Items {
+			fmt.Printf("Name: %s, Status: %s, CreateTime: %s\n", pod.ObjectMeta.Name, pod.Status.Phase, pod.ObjectMeta.CreationTimestamp)
+		}
+		fmt.Println()
+		time.Sleep(3 * time.Second)
+	}
 
 }
