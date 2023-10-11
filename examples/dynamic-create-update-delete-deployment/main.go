@@ -30,7 +30,6 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/tools/clientcmd"
-	"k8s.io/client-go/util/homedir"
 	"k8s.io/client-go/util/retry"
 	//
 	// Uncomment to load all auth plugins
@@ -44,8 +43,8 @@ import (
 
 func main() {
 	var kubeconfig *string
-	if home := homedir.HomeDir(); home != "" {
-		kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
+	if home, _ := os.Getwd(); home != "" {
+		kubeconfig = flag.String("kubeconfig", filepath.Join(home, "conf", "kubeconfig"), "(optional) absolute path to the kubeconfig file")
 	} else {
 		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
 	}

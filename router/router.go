@@ -13,6 +13,7 @@ func init() {
 
 	//Dobubo-Demo-API接口
 	var uctl controllers.UserController
+	var clientctl controllers.ClientController
 	apiV1Group := Router.Group("/v1/dobubo-demo")
 	{
 		apiV1Group.GET("/user/*id", uctl.User)
@@ -20,5 +21,9 @@ func init() {
 		apiV1Group.POST("/user", uctl.Store)
 		apiV1Group.PUT("/user", uctl.Update)
 		apiV1Group.DELETE("/user", uctl.Destroy)
+
+		apiV1Group.GET("/clientctl", clientctl.OperateDeploy)
+		apiV1Group.GET("/clientctl2", clientctl.GetPod)
+		//apiV1Group.DELETE("/user", clientctl.Destroy)
 	}
 }

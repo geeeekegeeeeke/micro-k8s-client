@@ -1,6 +1,7 @@
-module  gin-dubbogo-consumer
+module gin-dubbogo-consumer
 
 go 1.14
+
 require (
 	github.com/aliyun/alibaba-cloud-sdk-go v1.61.614
 	github.com/apache/dubbo-go v1.5.4
@@ -14,6 +15,9 @@ require (
 	github.com/tuotoo/qrcode v0.0.0-20190222102259-ac9c44189bf2 // indirect
 	github.com/willf/bitset v1.1.11 // indirect
 	gitlab.stagingvip.net/publicGroup/public v0.0.0-20201029110713-ec938beba922
+	k8s.io/api v0.16.9
+	k8s.io/apimachinery v0.16.9
+	k8s.io/client-go v0.16.9
 )
 
 //replace gitlab.stagingvip.net/publicGroup/public v0.0.0-20201029110713-ec938beba922 => D:\\go-project\\dubbo-go-demo-comsumer\\doc\\gitlab.stagingvip.net\\publicGroup
