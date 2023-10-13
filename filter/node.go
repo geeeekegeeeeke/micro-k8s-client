@@ -11,6 +11,6 @@ func NewNodeFilter(c *gin.Context) *NodeFilter {
 }
 func (this *NodeFilter) NodeInfo() map[string]string {
 	return map[string]string{
-		"name": this.c.DefaultQuery("name", "1"),
+		"name": this.c.DefaultQuery("name", "master"),
 	}
 }

@@ -2,169 +2,24 @@ package controllers
 
 import (
 	"bufio"
-	"flag"
 	"fmt"
+	"gin-dubbogo-consumer/filter"
 	"github.com/gin-gonic/gin"
 	apiv1 "k8s.io/api/core/v1"
+
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
-	"k8s.io/client-go/dynamic"
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/tools/clientcmd"
-	"k8s.io/client-go/util/homedir"
 	"k8s.io/client-go/util/retry"
 	"os"
-	"path/filepath"
-	"time"
 )
 
 type ClientController struct {
 	Base *BaseController
 }
 
-/*
-# 添加
-namespaceList, err := clientset.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
-
-	if err != nil {
-		panic(err)
-	}
-
-	for _, namespace := range namespaceList.Items {
-		fmt.Println("k8s namespace")
-		fmt.Printf("%s\t%s\t%s\t\n",
-			namespace.Name,
-			namespace.CreationTimestamp,
-			namespace.Status.Phase,
-		)
-	}
-*/
-func (c ClientController) Getnode(context *gin.Context) {
-	fmt.Println("liuyucaho  router list get ")
-	var kubeconfig *string
-	if home, _ := os.Getwd(); home != "" {
-		kubeconfig = flag.String("kubeconfig", filepath.Join(home, "conf", "kubeconfig"), "(optional) absolute path to the kubeconfig file")
-	} else {
-		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
-	}
-	flag.Parse()
-
-	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
-	if err != nil {
-		panic(err)
-	}
-	/*client, err := dynamic.NewForConfig(config)
-	if err != nil {
-		log.Fatal(err)
-	}*/
-	clientset, err := kubernetes.NewForConfig(config)
-	if err != nil {
-		panic(err)
-	}
-	nodeList, err := clientset.CoreV1().Nodes().List(metav1.ListOptions{})
-	if err != nil {
-		panic(err)
-	}
-	for _, node := range nodeList.Items {
-		fmt.Printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t,\n",
-			node.Name,
-			node.Status.Phase,
-			node.Status.Addresses,
-			node.Status.NodeInfo.OSImage,
-			node.Status.NodeInfo.KubeletVersion,
-			node.Status.NodeInfo.OperatingSystem,
-			node.Status.NodeInfo.Architecture,
-		)
-	}
-
-}
-
-func (c ClientController) Getnodeinfo(context *gin.Context) {
-	fmt.Println("liuyucaho  router list get ")
-	var kubeconfig *string
-	if home, _ := os.Getwd(); home != "" {
-		kubeconfig = flag.String("kubeconfig", filepath.Join(home, "conf", "kubeconfig"), "(optional) absolute path to the kubeconfig file")
-	} else {
-		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
-	}
-	flag.Parse()
-
-	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
-	if err != nil {
-		panic(err)
-	}
-	//client, err := dynamic.NewForConfig(config)
-	clientset, err := kubernetes.NewForConfig(config)
-	if err != nil {
-		panic(err)
-	}
-	/* liyuchao */
-	var nodeName string
-	nodeRel, err := clientset.CoreV1().Nodes().Get(nodeName, metav1.GetOptions{})
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("Name: %s \n", nodeRel.Name)
-	fmt.Printf("CreateTime: %s \n", nodeRel.CreationTimestamp)
-	fmt.Printf("NowTime: %s \n", nodeRel.Status.Conditions[0].LastHeartbeatTime)
-	fmt.Printf("kernelVersion: %s \n", nodeRel.Status.NodeInfo.KernelVersion)
-	fmt.Printf("SystemOs: %s \n", nodeRel.Status.NodeInfo.OSImage)
-	fmt.Printf("Cpu: %s \n", nodeRel.Status.Capacity.Cpu())
-	fmt.Printf("docker: %s \n", nodeRel.Status.NodeInfo.ContainerRuntimeVersion)
-	// fmt.Printf("Status: %s \n", nodeRel.Status.Conditions[len(nodes.Items[0].Status.Conditions)-1].Type)
-	fmt.Printf("Status: %s \n", nodeRel.Status.Conditions[len(nodeRel.Status.Conditions)-1].Type)
-	fmt.Printf("Mem: %s \n", nodeRel.Status.Allocatable.Memory().String())
-
-	//获取NODE
-	/*fmt.Println("####### 获取node ######")
-	nodes, err := clientset.CoreV1().Nodes().List(metav1.ListOptions{})
-	if err != nil {
-		panic(err)
-	}
-	for _, nds := range nodes.Items {
-		fmt.Printf("NodeName: %s\n", nds.Name)
-	}
-
-	//获取 指定NODE 的详细信息
-	fmt.Println("\n ####### node详细信息 ######")
-	nodeName := "k8s-master2"
-	nodeRel, err := clientset.CoreV1().Nodes().Get(nodeName, metav1.GetOptions{})
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("Name: %s \n", nodeRel.Name)
-	fmt.Printf("CreateTime: %s \n", nodeRel.CreationTimestamp)
-	fmt.Printf("NowTime: %s \n", nodeRel.Status.Conditions[0].LastHeartbeatTime)
-	fmt.Printf("kernelVersion: %s \n", nodeRel.Status.NodeInfo.KernelVersion)
-	fmt.Printf("SystemOs: %s \n", nodeRel.Status.NodeInfo.OSImage)
-	fmt.Printf("Cpu: %s \n", nodeRel.Status.Capacity.Cpu())
-	fmt.Printf("docker: %s \n", nodeRel.Status.NodeInfo.ContainerRuntimeVersion)
-	// fmt.Printf("Status: %s \n", nodeRel.Status.Conditions[len(nodes.Items[0].Status.Conditions)-1].Type)
-	fmt.Printf("Status: %s \n", nodeRel.Status.Conditions[len(nodeRel.Status.Conditions)-1].Type)
-	fmt.Printf("Mem: %s \n", nodeRel.Status.Allocatable.Memory().String())
-	*/
-}
-
 func (this *ClientController) OperateDeploy(*gin.Context) {
-	fmt.Println("liuyucaho  router list get ")
-	var kubeconfig *string
-	if home, _ := os.Getwd(); home != "" {
-		kubeconfig = flag.String("kubeconfig", filepath.Join(home, "conf", "kubeconfig"), "(optional) absolute path to the kubeconfig file")
-	} else {
-		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
-	}
-	flag.Parse()
-
-	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
-	if err != nil {
-		panic(err)
-	}
-	client, err := dynamic.NewForConfig(config)
-	if err != nil {
-		panic(err)
-	}
 
 	deploymentRes := schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"}
 
@@ -211,7 +66,7 @@ func (this *ClientController) OperateDeploy(*gin.Context) {
 
 	// Create Deployment
 	fmt.Println("Creating deployment...")
-	result, err := client.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Create(deployment, metav1.CreateOptions{})
+	result, err := dynamicClient.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Create(deployment, metav1.CreateOptions{})
 	if err != nil {
 		panic(err)
 	}
@@ -236,7 +91,7 @@ func (this *ClientController) OperateDeploy(*gin.Context) {
 	retryErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 		// Retrieve the latest version of Deployment before attempting update
 		// RetryOnConflict uses exponential backoff to avoid exhausting the apiserver
-		result, getErr := client.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Get("demo-deployment", metav1.GetOptions{})
+		result, getErr := dynamicClient.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Get("demo-deployment", metav1.GetOptions{})
 		if getErr != nil {
 			panic(fmt.Errorf("failed to get latest version of Deployment: %v", getErr))
 		}
@@ -260,7 +115,7 @@ func (this *ClientController) OperateDeploy(*gin.Context) {
 			panic(err)
 		}
 
-		_, updateErr := client.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Update(result, metav1.UpdateOptions{})
+		_, updateErr := dynamicClient.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Update(result, metav1.UpdateOptions{})
 		return updateErr
 	})
 	if retryErr != nil {
@@ -271,7 +126,7 @@ func (this *ClientController) OperateDeploy(*gin.Context) {
 	// List Deployments
 
 	fmt.Printf("Listing deployments in namespace %q:\n", apiv1.NamespaceDefault)
-	list, err := client.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).List(metav1.ListOptions{})
+	list, err := dynamicClient.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).List(metav1.ListOptions{})
 	if err != nil {
 		panic(err)
 	}
@@ -298,25 +153,7 @@ func (this *ClientController) OperateDeploy(*gin.Context) {
 	fmt.Println("Deleted deployment.")
 }
 
-func (this *ClientController) CreateDeploy(*gin.Context) {
-	fmt.Println("liuyucaho  router list get ")
-	var kubeconfig *string
-	if home, _ := os.Getwd(); home != "" {
-		kubeconfig = flag.String("kubeconfig", filepath.Join(home, "conf", "kubeconfig"), "(optional) absolute path to the kubeconfig file")
-	} else {
-		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
-	}
-	flag.Parse()
-
-	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
-	if err != nil {
-		panic(err)
-	}
-	client, err := dynamic.NewForConfig(config)
-	if err != nil {
-		panic(err)
-	}
-
+func (this *ClientController) CreateDeploy(c *gin.Context) {
 	deploymentRes := schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"}
 
 	deployment := &unstructured.Unstructured{
@@ -362,33 +199,15 @@ func (this *ClientController) CreateDeploy(*gin.Context) {
 
 	// Create Deployment
 	fmt.Println("Creating deployment...")
-	result, err := client.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Create(deployment, metav1.CreateOptions{})
+	result, err := dynamicClient.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Create(deployment, metav1.CreateOptions{})
 	if err != nil {
 		panic(err)
 	}
 	fmt.Printf("Created deployment %q.\n", result.GetName())
-
+	NewResponse(c).Success(map[string]interface{}{"result": result}).Json()
 }
 
-func (this *ClientController) UpdateDeploy(*gin.Context) {
-	fmt.Println("liuyucaho  router list get ")
-	var kubeconfig *string
-	if home, _ := os.Getwd(); home != "" {
-		kubeconfig = flag.String("kubeconfig", filepath.Join(home, "conf", "kubeconfig"), "(optional) absolute path to the kubeconfig file")
-	} else {
-		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
-	}
-	flag.Parse()
-
-	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
-	if err != nil {
-		panic(err)
-	}
-	client, err := dynamic.NewForConfig(config)
-	if err != nil {
-		panic(err)
-	}
-
+func (this *ClientController) UpdateDeploy(c *gin.Context) {
 	deploymentRes := schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"}
 
 	// Update Deployment
@@ -410,7 +229,7 @@ func (this *ClientController) UpdateDeploy(*gin.Context) {
 	retryErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 		// Retrieve the latest version of Deployment before attempting update
 		// RetryOnConflict uses exponential backoff to avoid exhausting the apiserver
-		result, getErr := client.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Get("demo-deployment", metav1.GetOptions{})
+		result, getErr := dynamicClient.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Get("demo-deployment", metav1.GetOptions{})
 		if getErr != nil {
 			panic(fmt.Errorf("failed to get latest version of Deployment: %v", getErr))
 		}
@@ -434,40 +253,23 @@ func (this *ClientController) UpdateDeploy(*gin.Context) {
 			panic(err)
 		}
 
-		_, updateErr := client.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Update(result, metav1.UpdateOptions{})
+		_, updateErr := dynamicClient.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Update(result, metav1.UpdateOptions{})
 		return updateErr
 	})
 	if retryErr != nil {
 		panic(fmt.Errorf("update failed: %v", retryErr))
 	}
 	fmt.Println("Updated deployment...")
+	NewResponse(c).Success(map[string]interface{}{}).Json()
 }
 
-func (this *ClientController) ListDeploy(*gin.Context) {
-	fmt.Println("liuyucaho  router list get ")
-	var kubeconfig *string
-	if home, _ := os.Getwd(); home != "" {
-		kubeconfig = flag.String("kubeconfig", filepath.Join(home, "conf", "kubeconfig"), "(optional) absolute path to the kubeconfig file")
-	} else {
-		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
-	}
-	flag.Parse()
-
-	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
-	if err != nil {
-		panic(err)
-	}
-	client, err := dynamic.NewForConfig(config)
-	if err != nil {
-		panic(err)
-	}
+func (this *ClientController) ListDeploy(c *gin.Context) {
 
 	deploymentRes := schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"}
 
 	// List Deployments
-	prompt()
 	fmt.Printf("Listing deployments in namespace %q:\n", apiv1.NamespaceDefault)
-	list, err := client.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).List(metav1.ListOptions{})
+	list, err := dynamicClient.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).List(metav1.ListOptions{})
 	if err != nil {
 		panic(err)
 	}
@@ -479,55 +281,9 @@ func (this *ClientController) ListDeploy(*gin.Context) {
 		}
 		fmt.Printf(" * %s (%d replicas)\n", d.GetName(), replicas)
 	}
+	NewResponse(c).Success(map[string]interface{}{"result": list}).Json()
 
-	// Delete Deployment
-	prompt()
-	fmt.Println("Deleting deployment...")
-	//deletePolicy := metav1.DeletePropagationForeground
-	/*deleteOptions := metav1.DeleteOptions{
-		PropagationPolicy: &deletePolicy,
-	}*/
-	/*if err := client.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Delete( "demo-deployment", deleteOptions); err != nil {
-		panic(err)
-	}*/
-
-	fmt.Println("Deleted deployment.")
 }
-
-//func (this *ClientController) DeleteDeploy(*gin.Context) {
-//	fmt.Println("liuyucaho  router list get ")
-//	var kubeconfig *string
-//	if home, _ := os.Getwd(); home != "" {
-//		kubeconfig = flag.String("kubeconfig", filepath.Join(home, "conf", "kubeconfig"), "(optional) absolute path to the kubeconfig file")
-//	} else {
-//		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
-//	}
-//	flag.Parse()
-//
-//	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
-//	if err != nil {
-//		panic(err)
-//	}
-//	client, err := dynamic.NewForConfig(config)
-//	if err != nil {
-//		panic(err)
-//	}
-//
-//	deploymentRes := schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"}
-//
-//	// Delete Deployment
-//	prompt()
-//	fmt.Println("Deleting deployment...")
-//	/*deletePolicy := metav1.DeletePropagationForeground
-//	deleteOptions := metav1.DeleteOptions{
-//		PropagationPolicy: &deletePolicy,
-//	}
-//	if err := client.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Delete( "demo-deployment",*deleteOptions); err != nil {
-//		panic(err)
-//	}*/
-//
-//	fmt.Println("Deleted deployment.")
-//}
 
 func prompt() {
 	fmt.Printf("-> Press Return key to continue.")
@@ -543,100 +299,133 @@ func prompt() {
 }
 
 func (this *ClientController) GetPod(c *gin.Context) {
-	fmt.Println("liuyucaho  router list get ")
-	var kubeconfig *string
-	if home, _ := os.Getwd(); home != "" {
-		kubeconfig = flag.String("kubeconfig", filepath.Join(home, "conf", "kubeconfig"), "(optional) absolute path to the kubeconfig file")
-	} else {
-		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
-	}
-	flag.Parse()
-
-	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
-	if err != nil {
-		panic(err)
-	}
-	//client, err := dynamic.NewForConfig(config)
-	if err != nil {
-		panic(err)
-	}
-
-	/// 使用k8s.io/client-go/kubernetes生成一个ClientSet的客户端
-	// 客户端生成后，就可以使用这个客户端与k8s API server进行交互，如Create/Retrieve/Update/Delete Resource
-	clientset, err := kubernetes.NewForConfig(config)
+	//for {
+	// 通过实现 clientset 的 CoreV1Interface 接口列表中的 PodsGetter 接口方法 Pods(namespace string)返回 PodInterface
+	// PodInterface 接口拥有操作 Pod 资源的方法，例如 Create、Update、Get、List 等方法
+	// 注意：Pods() 方法中 namespace 不指定则获取 Cluster 所有 Pod 列表
+	pods, err := clientset.CoreV1().Pods("").List(metav1.ListOptions{})
 	if err != nil {
 		panic(err.Error())
 	}
+	fmt.Printf("There are %d pods in the k8s cluster\n", len(pods.Items))
 
-	for {
-		// 通过实现 clientset 的 CoreV1Interface 接口列表中的 PodsGetter 接口方法 Pods(namespace string)返回 PodInterface
-		// PodInterface 接口拥有操作 Pod 资源的方法，例如 Create、Update、Get、List 等方法
-		// 注意：Pods() 方法中 namespace 不指定则获取 Cluster 所有 Pod 列表
-		pods, err := clientset.CoreV1().Pods("").List(metav1.ListOptions{})
-		if err != nil {
-			panic(err.Error())
-		}
-		fmt.Printf("There are %d pods in the k8s cluster\n", len(pods.Items))
-
-		// 获取指定namespace中的pod列表信息
-		namespace := "default"
-		pods, err = clientset.CoreV1().Pods(namespace).List(metav1.ListOptions{})
-		if err != nil {
-			panic(err)
-		}
-		fmt.Printf("There are %d pods in the namespace %s\n", len(pods.Items), namespace)
-		for _, pod := range pods.Items {
-			fmt.Printf("Name: %s, Status: %s, CreateTime: %s\n", pod.ObjectMeta.Name, pod.Status.Phase, pod.ObjectMeta.CreationTimestamp)
-		}
-		fmt.Println()
-		time.Sleep(3 * time.Second)
+	// 获取指定namespace中的pod列表信息
+	namespace := "default"
+	pods, err = clientset.CoreV1().Pods(namespace).List(metav1.ListOptions{})
+	if err != nil {
+		panic(err)
 	}
+	fmt.Printf("There are %d pods in the namespace %s\n", len(pods.Items), namespace)
+	for _, pod := range pods.Items {
+		fmt.Printf("Name: %s, Status: %s, CreateTime: %s\n", pod.ObjectMeta.Name, pod.Status.Phase, pod.ObjectMeta.CreationTimestamp)
+	}
+	fmt.Println()
+	NewResponse(c).Success(map[string]interface{}{"pods": pods}).Json()
+	//}
 
 }
 func (this *ClientController) GetPodInfo(c *gin.Context) {
-	var kubeconfig *string
-	if home := homedir.HomeDir(); home != "" {
-		kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
+
+	pods, err := clientset.CoreV1().Pods("").List(metav1.ListOptions{})
+	if err != nil {
+		panic(err.Error())
+	}
+	fmt.Printf("There are %d pods in the cluster\n", len(pods.Items))
+
+	// Examples for error handling:
+	// - Use helper functions like e.g. errors.IsNotFound()
+	// - And/or cast to StatusError and use its properties like e.g. ErrStatus.Message
+	namespace := "default"
+	info := filter.NewPodFilter(c).PodInfo()
+	podinfo, err := clientset.CoreV1().Pods(namespace).Get(info["name"], metav1.GetOptions{})
+	if errors.IsNotFound(err) {
+		fmt.Printf("Pod %s in namespace %s not found\n", info["name"], namespace)
+	} else if statusError, isStatus := err.(*errors.StatusError); isStatus {
+		fmt.Printf("Error getting pod %s in namespace %s: %v\n",
+			info["name"], namespace, statusError.ErrStatus.Message)
+	} else if err != nil {
+		panic(err.Error())
 	} else {
-		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
+		fmt.Printf("Found pod %s in namespace %s\n", info["name"], namespace)
 	}
-	flag.Parse()
+	NewResponse(c).Success(map[string]interface{}{"podInfo": podinfo}).Json()
 
-	// use the current context in kubeconfig
-	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+}
+func (this *ClientController) GetImage(c *gin.Context) {
+
+	pods, err := clientset.CoreV1().Pods("").List(metav1.ListOptions{})
 	if err != nil {
 		panic(err.Error())
 	}
+	fmt.Printf("There are %d pods in the cluster\n", len(pods.Items))
 
-	// create the clientset
-	clientset, err := kubernetes.NewForConfig(config)
+	// Examples for error handling:
+	// - Use helper functions like e.g. errors.IsNotFound()
+	// - And/or cast to StatusError and use its properties like e.g. ErrStatus.Message
+	//namespace := "default"
+	images := make(map[string]bool)
+
+	for _, pod := range pods.Items {
+		for _, container := range pod.Spec.Containers {
+			images[container.Image] = true
+		}
+	}
+
+	fmt.Println("Images:")
+	for image := range images {
+		fmt.Println(image)
+	}
+	NewResponse(c).Success(map[string]interface{}{"podInfo": images}).Json()
+}
+
+func (this *ClientController) GetContainer(c *gin.Context) {
+
+	pods, err := clientset.CoreV1().Pods("").List(metav1.ListOptions{})
 	if err != nil {
 		panic(err.Error())
 	}
-	for {
-		pods, err := clientset.CoreV1().Pods("").List(metav1.ListOptions{})
-		if err != nil {
-			panic(err.Error())
-		}
-		fmt.Printf("There are %d pods in the cluster\n", len(pods.Items))
+	fmt.Printf("There are %d pods in the cluster\n", len(pods.Items))
 
-		// Examples for error handling:
-		// - Use helper functions like e.g. errors.IsNotFound()
-		// - And/or cast to StatusError and use its properties like e.g. ErrStatus.Message
-		namespace := "default"
-		pod := "example-xxxxx"
-		_, err = clientset.CoreV1().Pods(namespace).Get(pod, metav1.GetOptions{})
-		if errors.IsNotFound(err) {
-			fmt.Printf("Pod %s in namespace %s not found\n", pod, namespace)
-		} else if statusError, isStatus := err.(*errors.StatusError); isStatus {
-			fmt.Printf("Error getting pod %s in namespace %s: %v\n",
-				pod, namespace, statusError.ErrStatus.Message)
-		} else if err != nil {
-			panic(err.Error())
-		} else {
-			fmt.Printf("Found pod %s in namespace %s\n", pod, namespace)
-		}
+	containers := make(map[string]bool)
 
-		time.Sleep(10 * time.Second)
+	for _, pod := range pods.Items {
+		fmt.Println(pod.Spec.Containers)
+		for _, container := range pod.Spec.Containers {
+			fmt.Println(container)
+			containers[container.Name] = true
+		}
 	}
+
+	fmt.Println("Containers:")
+	for container := range containers {
+		fmt.Println(container)
+	}
+	NewResponse(c).Success(map[string]interface{}{"podInfo": containers}).Json()
+
+}
+func (this *ClientController) GetComponent(c *gin.Context) {
+	// 获取所有组件状态
+	componentStatuses, err := clientset.CoreV1().ComponentStatuses().List(metav1.ListOptions{})
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Component Statuses:")
+	for _, cs := range componentStatuses.Items {
+		fmt.Printf("- %s: %s\n", cs.Name, getComponentStatus(cs))
+	}
+
+	NewResponse(c).Success(map[string]interface{}{"podInfo": componentStatuses.Items}).Json()
+
+}
+
+// 获取组件状态
+func getComponentStatus(cs apiv1.ComponentStatus) string {
+	if len(cs.Conditions) == 0 {
+		return "Unknown"
+	}
+
+	// 获取最后一个条件的状态
+	lastCondition := cs.Conditions[len(cs.Conditions)-1]
+	return string(lastCondition.Type)
 }

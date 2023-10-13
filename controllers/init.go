@@ -24,7 +24,14 @@ package controllers
  *
  */
 import (
+	"flag"
+	"fmt"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/tools/clientcmd"
+	"k8s.io/kubernetes/staging/src/k8s.io/client-go/dynamic"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 )
@@ -47,12 +54,12 @@ func (this *Response) GetStatusOk() int {
 
 func (this *Response) Success(data map[string]interface{}) *Response {
 	this.Code = 200
-	this.Message = "suceess"
+	this.Message = "success"
 	this.Data = data
 	return this
 }
 func (this *Response) Fail(code int, message string) *Response {
-	this.Code = code
+	this.Code = -1
 	this.Message = message
 	this.Data = make(map[string]interface{})
 	return this
@@ -77,4 +84,34 @@ func (this *Response) Yaml() {
 
 }
 
-func init() {}
+var (
+	clientset     *kubernetes.Clientset
+	dynamicClient dynamic.Interface
+)
+
+func init() {
+	fmt.Println("liuyucaho  router list get ")
+	var kubeconfig *string
+	if home, _ := os.Getwd(); home != "" {
+		kubeconfig = flag.String("kubeconfig", filepath.Join(home, "conf", "kubeconfig"), "(optional) absolute path to the kubeconfig file")
+	} else {
+		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
+	}
+	flag.Parse()
+
+	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+	if err != nil {
+		fmt.Println("Failed to build config:", err)
+		return
+	}
+	clientset, err = kubernetes.NewForConfig(config)
+	dynamicClient, err = dynamic.NewForConfig(config)
+	if err != nil {
+		fmt.Println("Failed to create clientset:", err)
+		return
+	}
+}
+
+func GetClientset() *kubernetes.Clientset {
+	return clientset
+}

@@ -18,6 +18,7 @@ require (
 	k8s.io/api v0.16.9
 	k8s.io/apimachinery v0.16.9
 	k8s.io/client-go v0.16.9
+	k8s.io/kubernetes v1.13.0
 )
 
 //replace gitlab.stagingvip.net/publicGroup/public v0.0.0-20201029110713-ec938beba922 => D:\\go-project\\dubbo-go-demo-comsumer\\doc\\gitlab.stagingvip.net\\publicGroup

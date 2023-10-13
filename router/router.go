@@ -19,7 +19,7 @@ func init() {
 	var applyctl controllers.ApplyController
 	var ingressctl controllers.IngressController
 	var storagectl controllers.StorageController
-	apiV1Group := Router.Group("/v1")
+	apiV1Group := Router.Group("/v1/resource")
 	{
 		apiV1Group.GET("/user/*id", uctl.User)
 		apiV1Group.GET("/users", uctl.Users)
@@ -32,6 +32,9 @@ func init() {
 		apiV1Group.GET("/pod", podctl.GetPodInfo)
 		apiV1Group.POST("/pod/deploy", podctl.CreateDeploy)
 		apiV1Group.PUT("/pod/deploy", podctl.UpdateDeploy)
+		apiV1Group.GET("/pod/image", podctl.GetImage)
+		apiV1Group.GET("/pod/container", podctl.GetContainer)
+		apiV1Group.GET("/pod/component", podctl.GetComponent)
 		//apiV1Group.GET("/pod/deploy", podctl.ListDeploy)
 		apiV1Group.GET("/node", nodectl.ListNode)
 		apiV1Group.GET("/node/info", nodectl.GetNodeInfo)
@@ -41,7 +44,8 @@ func init() {
 		apiV1Group.GET("/apply/namespace", applyctl.Namespace)
 		apiV1Group.PUT("/apply/secret", applyctl.SetSecret)
 		apiV1Group.GET("/apply/secret", applyctl.Secret)
-		apiV1Group.GET("/apply", applyctl.GetApply)
+		apiV1Group.GET("/apply/tomcat", applyctl.DeployTomcatApp)
+		//apiV1Group.GET("/apply", applyctl.GetApply)
 		apiV1Group.GET("/ingress/info", ingressctl.ListIngress)
 		apiV1Group.GET("/ingress", ingressctl.ListIngressInfo)
 		apiV1Group.GET("/storage", storagectl.ListPersistent)
