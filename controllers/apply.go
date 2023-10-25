@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
@@ -44,7 +45,7 @@ func (this *ApplyController) DeployTomcatApp(c *gin.Context) {
 	time.Sleep(30 * time.Second)
 
 	// 获取Service的External IP
-	service, err := clientset.CoreV1().Services(namespace).Get(appName, metav1.GetOptions{})
+	service, err := clientset.CoreV1().Services(namespace).Get(context.TODO(), appName, metav1.GetOptions{})
 	if err != nil {
 		log.Fatalf("Failed to get service: %v", err)
 	}
@@ -87,7 +88,7 @@ func deployTomcat(clientset *kubernetes.Clientset, namespace, appName string) er
 	deploymentYAMLStr = strings.ReplaceAll(deploymentYAMLStr, "{{APP_NAME}}", appName)
 
 	// 创建Tomcat的Deployment
-	_, err = clientset.AppsV1().Deployments(namespace).Create(&appsv1.Deployment{
+	_, err = clientset.AppsV1().Deployments(namespace).Create(context.TODO(), &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: appName,
 		},
@@ -121,7 +122,7 @@ func deployTomcat(clientset *kubernetes.Clientset, namespace, appName string) er
 				},
 			},
 		},
-	})
+	}, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create Tomcat deployment: %v", err)
 	}
@@ -131,9 +132,9 @@ func deployTomcat(clientset *kubernetes.Clientset, namespace, appName string) er
 		Namespace(namespace).
 		Name(appName).
 		SubResource("apply").
-		Body([]byte(deploymentYAMLStr)).
-		Do()
+		Body([]byte(deploymentYAMLStr)).Do(context.TODO())
 
+	//result, err := clientset.AppsV1().Deployments(namespace).Create(context.TODO(), deployment, v1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to apply Tomcat deployment YAML: %v", err)
 	}
@@ -163,7 +164,7 @@ func createService(clientset *kubernetes.Clientset, namespace, appName string) e
 		},
 	}
 
-	_, err := clientset.CoreV1().Services(namespace).Create(service)
+	_, err := clientset.CoreV1().Services(namespace).Create(context.TODO(), service, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create service: %v", err)
 	}
@@ -209,7 +210,7 @@ func (this *ApplyController) DeployApp(c *gin.Context) {
 		},
 	}
 	// 部署Deployment
-	_, err := clientset.AppsV1().Deployments("default").Create(deployment)
+	_, err := clientset.AppsV1().Deployments("default").Create(context.TODO(), deployment, metav1.CreateOptions{})
 	if err != nil {
 		fmt.Println("Failed to deploy webapp deployment:", err)
 		return
@@ -238,7 +239,7 @@ func (this *ApplyController) DeployApp(c *gin.Context) {
 	}
 
 	// 部署Service
-	_, err = clientset.CoreV1().Services("default").Create(service)
+	_, err = clientset.CoreV1().Services("default").Create(context.TODO(), service, metav1.CreateOptions{})
 	if err != nil {
 		fmt.Println("Failed to deploy webapp service:", err)
 		return
@@ -253,7 +254,7 @@ func (this *ApplyController) Namespace(c *gin.Context) {
 	defer this.Base.Catch(NewResponse(c))
 
 	// https://godoc.org/k8s.io/client-go/kubernetes/typed/core/v1
-	namespaces, err := clientset.CoreV1().Namespaces().List(metav1.ListOptions{})
+	namespaces, err := clientset.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		log.Fatalln("failed to get name space:", err)
 	}
@@ -265,7 +266,7 @@ func (this *ApplyController) Namespace(c *gin.Context) {
 func (this *ApplyController) Secret(c *gin.Context) {
 	defer this.Base.Catch(NewResponse(c))
 
-	secrets, err := clientset.CoreV1().Secrets("").List(metav1.ListOptions{})
+	secrets, err := clientset.CoreV1().Secrets("").List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		log.Fatalln("failed to get secret:", err)
 	}
@@ -282,7 +283,7 @@ func (this *ApplyController) SetSecret(c *gin.Context) {
 
 	// https://godoc.org/k8s.io/api/core/v1
 	// https://godoc.org/k8s.io/client-go/kubernetes/typed/core/v1#SecretInterface
-	secrets, err := clientset.CoreV1().Secrets("default").Create(&v1.Secret{
+	secrets, err := clientset.CoreV1().Secrets("default").Create(context.TODO(), &v1.Secret{
 		TypeMeta: metav1.TypeMeta{
 			Kind: "Secret",
 		},
@@ -291,7 +292,7 @@ func (this *ApplyController) SetSecret(c *gin.Context) {
 			Namespace: "default",
 		},
 		Data: data,
-	})
+	}, metav1.CreateOptions{})
 	fmt.Println(secrets)
 	if err != nil {
 		panic(err)
@@ -301,7 +302,7 @@ func (this *ApplyController) SetSecret(c *gin.Context) {
 func (this *ApplyController) ConfigMap(c *gin.Context) {
 	defer this.Base.Catch(NewResponse(c))
 	// kubernetesの設定ファイルのパスを組み立てる
-	configMaps, err := clientset.CoreV1().ConfigMaps("").List(metav1.ListOptions{})
+	configMaps, err := clientset.CoreV1().ConfigMaps("").List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		log.Fatalln("failed to get config map:", err)
 	}

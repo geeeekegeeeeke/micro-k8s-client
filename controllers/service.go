@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	corev1 "k8s.io/api/core/v1"
@@ -40,7 +41,7 @@ func (this *ServiceController) DeployService(c *gin.Context) {
 	}
 
 	// 部署Service
-	services, err := clientset.CoreV1().Services("default").Create(service)
+	services, err := clientset.CoreV1().Services("default").Create(context.TODO(), service, metav1.CreateOptions{})
 	if err != nil {
 		fmt.Println("Failed to deploy service:", err)
 		return
@@ -54,7 +55,7 @@ func (this *ServiceController) ListService(c *gin.Context) {
 	defer this.Base.Catch(NewResponse(c))
 
 	// https://godoc.org/k8s.io/client-go/kubernetes/typed/core/v1
-	services, err := clientset.CoreV1().Services("").List(metav1.ListOptions{})
+	services, err := clientset.CoreV1().Services("").List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		log.Fatalln("failed to get services:", err)
 	}
@@ -83,7 +84,7 @@ func (this *ServiceController) ListServiceAccount(c *gin.Context) {
 	}
 
 	// https://godoc.org/k8s.io/client-go/kubernetes/typed/core/v1
-	serviceAccounts, err := clientset.CoreV1().ServiceAccounts("").List(metav1.ListOptions{})
+	serviceAccounts, err := clientset.CoreV1().ServiceAccounts("").List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		log.Fatalln("failed to get service accounts:", err)
 	}

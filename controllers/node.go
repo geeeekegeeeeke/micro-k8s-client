@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"context"
 	"fmt"
 	"gin-dubbogo-consumer/filter"
 	"github.com/gin-gonic/gin"
@@ -33,7 +34,7 @@ func (this *NodeController) ListNode(c *gin.Context) {
 		}
 	*/
 	// https://godoc.org/k8s.io/client-go/kubernetes/typed/core/v1
-	nodes, err := clientset.CoreV1().Nodes().List(metav1.ListOptions{})
+	nodes, err := clientset.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		log.Fatalln("failed to get nodes:", err)
 	}
@@ -57,7 +58,7 @@ func (this *NodeController) GetNodeInfo(c *gin.Context) {
 	    return clientset.CoreV1().Nodes().Get(context.TODO(), name, metav1.GetOptions{})
 	}
 	*/
-	nodeRel, err := clientset.CoreV1().Nodes().Get(nodeName, metav1.GetOptions{})
+	nodeRel, err := clientset.CoreV1().Nodes().Get(context.TODO(), nodeName, metav1.GetOptions{})
 	if err != nil {
 		panic(err)
 	}

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"gin-dubbogo-consumer/filter"
 	"github.com/gin-gonic/gin"
@@ -66,7 +67,7 @@ func (this *ClientController) OperateDeploy(*gin.Context) {
 
 	// Create Deployment
 	fmt.Println("Creating deployment...")
-	result, err := dynamicClient.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Create(deployment, metav1.CreateOptions{})
+	result, err := dynamicClient.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Create(context.TODO(), deployment, metav1.CreateOptions{})
 	if err != nil {
 		panic(err)
 	}
@@ -91,7 +92,7 @@ func (this *ClientController) OperateDeploy(*gin.Context) {
 	retryErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 		// Retrieve the latest version of Deployment before attempting update
 		// RetryOnConflict uses exponential backoff to avoid exhausting the apiserver
-		result, getErr := dynamicClient.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Get("demo-deployment", metav1.GetOptions{})
+		result, getErr := dynamicClient.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Get(context.TODO(), "demo-deployment", metav1.GetOptions{})
 		if getErr != nil {
 			panic(fmt.Errorf("failed to get latest version of Deployment: %v", getErr))
 		}
@@ -115,7 +116,7 @@ func (this *ClientController) OperateDeploy(*gin.Context) {
 			panic(err)
 		}
 
-		_, updateErr := dynamicClient.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Update(result, metav1.UpdateOptions{})
+		_, updateErr := dynamicClient.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Update(context.TODO(), result, metav1.UpdateOptions{})
 		return updateErr
 	})
 	if retryErr != nil {
@@ -126,7 +127,7 @@ func (this *ClientController) OperateDeploy(*gin.Context) {
 	// List Deployments
 
 	fmt.Printf("Listing deployments in namespace %q:\n", apiv1.NamespaceDefault)
-	list, err := dynamicClient.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).List(metav1.ListOptions{})
+	list, err := dynamicClient.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		panic(err)
 	}
@@ -199,7 +200,7 @@ func (this *ClientController) CreateDeploy(c *gin.Context) {
 
 	// Create Deployment
 	fmt.Println("Creating deployment...")
-	result, err := dynamicClient.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Create(deployment, metav1.CreateOptions{})
+	result, err := dynamicClient.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Create(context.TODO(), deployment, metav1.CreateOptions{})
 	if err != nil {
 		panic(err)
 	}
@@ -229,7 +230,7 @@ func (this *ClientController) UpdateDeploy(c *gin.Context) {
 	retryErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 		// Retrieve the latest version of Deployment before attempting update
 		// RetryOnConflict uses exponential backoff to avoid exhausting the apiserver
-		result, getErr := dynamicClient.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Get("demo-deployment", metav1.GetOptions{})
+		result, getErr := dynamicClient.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Get(context.TODO(), "demo-deployment", metav1.GetOptions{})
 		if getErr != nil {
 			panic(fmt.Errorf("failed to get latest version of Deployment: %v", getErr))
 		}
@@ -253,7 +254,7 @@ func (this *ClientController) UpdateDeploy(c *gin.Context) {
 			panic(err)
 		}
 
-		_, updateErr := dynamicClient.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Update(result, metav1.UpdateOptions{})
+		_, updateErr := dynamicClient.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).Update(context.TODO(), result, metav1.UpdateOptions{})
 		return updateErr
 	})
 	if retryErr != nil {
@@ -269,7 +270,7 @@ func (this *ClientController) ListDeploy(c *gin.Context) {
 
 	// List Deployments
 	fmt.Printf("Listing deployments in namespace %q:\n", apiv1.NamespaceDefault)
-	list, err := dynamicClient.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).List(metav1.ListOptions{})
+	list, err := dynamicClient.Resource(deploymentRes).Namespace(apiv1.NamespaceDefault).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		panic(err)
 	}
@@ -303,7 +304,7 @@ func (this *ClientController) GetPod(c *gin.Context) {
 	// 通过实现 clientset 的 CoreV1Interface 接口列表中的 PodsGetter 接口方法 Pods(namespace string)返回 PodInterface
 	// PodInterface 接口拥有操作 Pod 资源的方法，例如 Create、Update、Get、List 等方法
 	// 注意：Pods() 方法中 namespace 不指定则获取 Cluster 所有 Pod 列表
-	pods, err := clientset.CoreV1().Pods("").List(metav1.ListOptions{})
+	pods, err := clientset.CoreV1().Pods("").List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		panic(err.Error())
 	}
@@ -311,7 +312,7 @@ func (this *ClientController) GetPod(c *gin.Context) {
 
 	// 获取指定namespace中的pod列表信息
 	namespace := "default"
-	pods, err = clientset.CoreV1().Pods(namespace).List(metav1.ListOptions{})
+	pods, err = clientset.CoreV1().Pods(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		panic(err)
 	}
@@ -326,7 +327,7 @@ func (this *ClientController) GetPod(c *gin.Context) {
 }
 func (this *ClientController) GetPodInfo(c *gin.Context) {
 
-	pods, err := clientset.CoreV1().Pods("").List(metav1.ListOptions{})
+	pods, err := clientset.CoreV1().Pods("").List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		panic(err.Error())
 	}
@@ -337,7 +338,7 @@ func (this *ClientController) GetPodInfo(c *gin.Context) {
 	// - And/or cast to StatusError and use its properties like e.g. ErrStatus.Message
 	namespace := "default"
 	info := filter.NewPodFilter(c).PodInfo()
-	podinfo, err := clientset.CoreV1().Pods(namespace).Get(info["name"], metav1.GetOptions{})
+	podinfo, err := clientset.CoreV1().Pods(namespace).Get(context.TODO(), info["name"], metav1.GetOptions{})
 	if errors.IsNotFound(err) {
 		fmt.Printf("Pod %s in namespace %s not found\n", info["name"], namespace)
 	} else if statusError, isStatus := err.(*errors.StatusError); isStatus {
@@ -353,7 +354,7 @@ func (this *ClientController) GetPodInfo(c *gin.Context) {
 }
 func (this *ClientController) GetImage(c *gin.Context) {
 
-	pods, err := clientset.CoreV1().Pods("").List(metav1.ListOptions{})
+	pods, err := clientset.CoreV1().Pods("").List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		panic(err.Error())
 	}
@@ -380,7 +381,7 @@ func (this *ClientController) GetImage(c *gin.Context) {
 
 func (this *ClientController) GetContainer(c *gin.Context) {
 
-	pods, err := clientset.CoreV1().Pods("").List(metav1.ListOptions{})
+	pods, err := clientset.CoreV1().Pods("").List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		panic(err.Error())
 	}
@@ -405,7 +406,7 @@ func (this *ClientController) GetContainer(c *gin.Context) {
 }
 func (this *ClientController) GetComponent(c *gin.Context) {
 	// 获取所有组件状态
-	componentStatuses, err := clientset.CoreV1().ComponentStatuses().List(metav1.ListOptions{})
+	componentStatuses, err := clientset.CoreV1().ComponentStatuses().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		panic(err)
 	}

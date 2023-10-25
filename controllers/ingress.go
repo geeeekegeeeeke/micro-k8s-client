@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -16,7 +17,7 @@ func (this *IngressController) ListIngress(c *gin.Context) {
 	defer this.Base.Catch(NewResponse(c))
 
 	// https://godoc.org/k8s.io/client-go/kubernetes/typed/core/v1
-	ingresses, err := clientset.ExtensionsV1beta1().Ingresses("").List(metav1.ListOptions{})
+	ingresses, err := clientset.ExtensionsV1beta1().Ingresses("").List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		log.Fatalln("failed to get ingress:", err)
 	}
@@ -27,7 +28,7 @@ func (this *IngressController) ListIngress(c *gin.Context) {
 func (this *IngressController) ListIngressInfo(c *gin.Context) {
 	defer this.Base.Catch(NewResponse(c))
 	// https://godoc.org/k8s.io/client-go/kubernetes/typed/core/v1
-	ingress, err := clientset.ExtensionsV1beta1().Ingresses("jx").Get("docker-registry", metav1.GetOptions{})
+	ingress, err := clientset.ExtensionsV1beta1().Ingresses("jx").Get(context.TODO(), "docker-registry", metav1.GetOptions{})
 	if err != nil {
 		log.Fatalln("failed to get ingresses:", err)
 	}
