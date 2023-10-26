@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
+
 	"io/ioutil"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -11,6 +12,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/client-go/kubernetes"
+
 	"log"
 	"os"
 	"path/filepath"
@@ -172,6 +174,7 @@ func createService(clientset *kubernetes.Clientset, namespace, appName string) e
 	return nil
 
 }
+
 func (this *ApplyController) DeployApp(c *gin.Context) {
 	defer this.Base.Catch(NewResponse(c))
 	// 定义Deployment对象

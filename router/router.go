@@ -20,6 +20,7 @@ func init() {
 	var ingressctl controllers.IngressController
 	var storagectl controllers.StorageController
 	var dockerctl controllers.DcokerController
+	var dockerDeployctl controllers.DcokerDeployController
 	apiV1Group := Router.Group("/v1/resource")
 	{
 		apiV1Group.GET("/user/*id", uctl.User)
@@ -51,6 +52,8 @@ func init() {
 		apiV1Group.GET("/ingress", ingressctl.ListIngressInfo)
 		apiV1Group.GET("/storage", storagectl.ListPersistent)
 		apiV1Group.GET("/storage/vol", storagectl.ListPersistentVol)
+		apiV1Group.GET("/dockerdeploy", dockerDeployctl.DeployAppBydirectCompose)
+		apiV1Group.GET("/composedeploy", dockerDeployctl.DeployAppComposeParam)
 		//
 		//apiV1Group.GET("/docker/list", dockerctl.ListContainer)
 		//apiV1Group.GET("/docker/search", dockerctl.SearchContainer)

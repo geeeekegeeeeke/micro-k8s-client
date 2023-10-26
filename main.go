@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-
 	"gin-dubbogo-consumer/router"
 
 	"gitlab.stagingvip.net/publicGroup/public/common"
