@@ -40,9 +40,9 @@ import (
 type Response struct {
 	c        *gin.Context
 	statusOk int
-	Code     int                    `json:"code"`
-	Message  string                 `json:"message"`
-	Data     map[string]interface{} `json:"data"`
+	Code     int         `json:"code"`
+	Message  string      `json:"message"`
+	Data     interface{} `json:"data"`
 }
 
 func NewResponse(c *gin.Context) *Response {
@@ -53,7 +53,7 @@ func (this *Response) GetStatusOk() int {
 	return this.statusOk
 }
 
-func (this *Response) Success(data map[string]interface{}) *Response {
+func (this *Response) Success(data interface{}) *Response {
 	this.Code = 200
 	this.Message = "success"
 	this.Data = data
@@ -62,7 +62,13 @@ func (this *Response) Success(data map[string]interface{}) *Response {
 func (this *Response) Fail(code int, message string) *Response {
 	this.Code = -1
 	this.Message = message
-	this.Data = make(map[string]interface{})
+	this.Data = nil
+	return this
+}
+func (this *Response) error(code int, message string, err error) *Response {
+	this.Code = -1
+	this.Message = message
+	this.Data = err
 	return this
 }
 
