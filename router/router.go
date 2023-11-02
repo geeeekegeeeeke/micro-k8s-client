@@ -1,170 +1,178 @@
 package router
 
 import (
-	"gin-dubbogo-consumer/controllers"
-
+	"gin-dubbogo-consumer/api/v1"
 	"github.com/gin-gonic/gin"
 )
 
-var Router *gin.Engine
+//var Router *gin.Engine
 
-func init() {
-	Router = gin.New()
+type DockerRouter struct {
+}
 
-	//Dobubo-Demo-API接口
-	var uctl controllers.UserController
-	var podctl controllers.ClientController
-	var nodectl controllers.NodeController
-	var svcctl controllers.ServiceController
-	var applyctl controllers.ApplyController
-	var ingressctl controllers.IngressController
-	var storagectl controllers.StorageController
-	var dockerctl controllers.DcokerController
-	var dockerDeployctl controllers.DcokerDeployController
-	apiV1Group := Router.Group("/v1/resource")
+func (a *K8sRouter) InitDockerRouter(Router *gin.RouterGroup) {
+	/*	Router = gin.New()
+
+		//Dobubo-Demo-API接口
+		var baseApi v1.UserController
+		var baseApi v1.ClientController
+		var baseApi v1.NodeController
+		var svcctl v1.ServiceController
+		var applyctl v1.ApplyController
+		var baseApi v1.IngressController
+		var baseApi v1.StorageController
+		var baseApi v1.DcokerController
+		var baseApi v1.YmlDeployController
+		//var baseApi controllers.DcokerDeployController
+		var dockerDeployctl v1.DcokerDeployController
+		baseApi := Router.Group("/v1/resource")*/
+	baseRouter := Router.Group("")
+	baseApi := v1.ApiGroupApp.BaseApi
 	{
-		apiV1Group.GET("/user/*id", uctl.User)
-		apiV1Group.GET("/users", uctl.Users)
-		apiV1Group.POST("/user", uctl.Store)
-		apiV1Group.PUT("/user", uctl.Update)
-		apiV1Group.DELETE("/user", uctl.Destroy)
+		/*baseRouter.GET("/user/*id", baseApi.User)
+		baseRouter.GET("/users", baseApi.Users)
+		baseRouter.POST("/user", baseApi.Store)
+		baseRouter.PUT("/user", baseApi.Update)
+		baseRouter.DELETE("/user", baseApi.Destroy)*/
 
-		//apiV1Group.GET("/pod", podctl.OperateDeploy)
-		apiV1Group.GET("/pod/deploy", podctl.ListDeploy)
-		apiV1Group.GET("/pod", podctl.GetPodInfo)
-		apiV1Group.POST("/pod/deploy", podctl.CreateDeploy)
-		apiV1Group.PUT("/pod/deploy", podctl.UpdateDeploy)
-		apiV1Group.GET("/pod/image", podctl.GetImage)
-		apiV1Group.GET("/pod/container", podctl.GetContainer)
-		apiV1Group.GET("/pod/component", podctl.GetComponent)
-		//apiV1Group.GET("/pod/deploy", podctl.ListDeploy)
-		apiV1Group.GET("/node", nodectl.ListNode)
-		apiV1Group.GET("/node/info", nodectl.GetNodeInfo)
-		apiV1Group.GET("/svc/account", svcctl.ListServiceAccount)
-		apiV1Group.GET("/svc", svcctl.ListService)
-		apiV1Group.GET("/apply/config", applyctl.ConfigMap)
-		apiV1Group.GET("/apply/namespace", applyctl.Namespace)
-		apiV1Group.PUT("/apply/secret", applyctl.SetSecret)
-		apiV1Group.GET("/apply/secret", applyctl.Secret)
-		apiV1Group.GET("/apply/tomcat", applyctl.DeployTomcatApp)
-		//apiV1Group.GET("/apply", applyctl.GetApply)
-		apiV1Group.GET("/ingress/info", ingressctl.ListIngress)
-		apiV1Group.GET("/ingress", ingressctl.ListIngressInfo)
-		apiV1Group.GET("/storage", storagectl.ListPersistent)
-		apiV1Group.GET("/storage/vol", storagectl.ListPersistentVol)
-		apiV1Group.GET("/dockerdeploy", dockerDeployctl.DeployAppBydirectCompose)
-		apiV1Group.GET("/composedeploy", dockerDeployctl.DeployAppComposeParam)
+		//baseRouter.GET("/pod", baseApi.OperateDeploy)
+		baseRouter.GET("/pod/deploy", baseApi.ListDeploy)
+		baseRouter.GET("/pod", baseApi.GetNodeInfo)
+		baseRouter.POST("/pod/deploy", baseApi.CreateDeploy)
+		baseRouter.PUT("/pod/deploy", baseApi.UpdateDeploy)
+		baseRouter.GET("/pod/image", baseApi.GetImage)
+		baseRouter.GET("/pod/container", baseApi.GetContainer)
+		baseRouter.GET("/pod/component", baseApi.GetComponent)
+		//baseRouter.GET("/pod/deploy", baseApi.ListDeploy)
+		baseRouter.GET("/node", baseApi.ListNode)
+		baseRouter.GET("/node/info", baseApi.GetNodeInfo)
+		//baseRouter.GET("/svc/account", baseApi.lise)
+		//baseRouter.GET("/svc", baseApi.ListService)
+		baseRouter.GET("/apply/config", baseApi.ConfigMap)
+		baseRouter.GET("/apply/namespace", baseApi.Namespace)
+		baseRouter.PUT("/apply/secret", baseApi.SetSecret)
+		baseRouter.GET("/apply/secret", baseApi.Secret)
+		baseRouter.GET("/apply/tomcat", baseApi.DeployTomcatApp)
+		//baseRouter.GET("/apply", applyctl.GetApply)
+		baseRouter.GET("/ingress/info", baseApi.ListIngress)
+		baseRouter.GET("/ingress", baseApi.ListIngressInfo)
+		baseRouter.GET("/storage", baseApi.ListPersistent)
+		baseRouter.GET("/storage/vol", baseApi.ListPersistentVol)
+		//baseRouter.GET("/dockerdeploy", baseApi.DeployAppBydirectCompose)
+		baseRouter.POST("/k8s/ymldeploy", baseApi.YmlDeploy)
 		//
-		//apiV1Group.GET("/docker/list", dockerctl.ListContainer)
-		//apiV1Group.GET("/docker/search", dockerctl.SearchContainer)
-		//apiV1Group.GET("/docker/stats", dockerctl.ContainerStats)
-		//apiV1Group.GET("/docker/log", dockerctl.ContainerLogs)
-		//apiV1Group.GET("/docker/rename", dockerctl.ContainerOperation)
-		//apiV1Group.GET("/docker/exec", dockerctl.ContainerInfo)
-		//apiV1Group.GET("/docker/", dockerctl.ContainerCreate)
-		//apiV1Group.GET("/storage", ingressctl.ListIngressInfo)
-		//apiV1Group.GET("/exec", dockerctl.ContainerWsSsh)  todo
-		apiV1Group.GET("/docker/stats/:id", dockerctl.ContainerStats)
+		//baseRouter.GET("/docker/list", baseApi.ListContainer)
+		//baseRouter.GET("/docker/search", baseApi.SearchContainer)
+		//baseRouter.GET("/docker/stats", baseApi.ContainerStats)
+		//baseRouter.GET("/docker/log", baseApi.ContainerLogs)
+		//baseRouter.GET("/docker/rename", baseApi.ContainerOperation)
+		//baseRouter.GET("/docker/exec", baseApi.ContainerInfo)
+		//baseRouter.GET("/docker/", baseApi.ContainerCreate)
+		//baseRouter.GET("/storage", baseApi.ListIngressInfo)
+		//baseRouter.GET("/exec", baseApi.ContainerWsSsh)  todo
+		baseRouter.GET("/docker/stats/:id", baseApi.ContainerStats)
 
-		apiV1Group.POST("/docker", dockerctl.ContainerCreate)
-		apiV1Group.POST("/docker/update", dockerctl.ContainerUpdate)
-		apiV1Group.POST("/docker/upgrade", dockerctl.ContainerUpgrade)
-		apiV1Group.POST("/docker/info", dockerctl.ContainerInfo)
-		apiV1Group.POST("/docker/search", dockerctl.SearchContainer)
-		apiV1Group.POST("/docker/list", dockerctl.ListContainer)
-		apiV1Group.GET("/docker/list/stats", dockerctl.ContainerStats)
-		apiV1Group.GET("/docker/search/log", dockerctl.ContainerLogs)
-		apiV1Group.GET("/docker/limit", dockerctl.LoadResouceLimit)
-		apiV1Group.POST("/docker/clean/log", dockerctl.CleanContainerLog)
-		apiV1Group.POST("/docker/load/log", dockerctl.LoadContainerLog)
-		apiV1Group.POST("/docker/inspect", dockerctl.Inspect)
-		apiV1Group.POST("/docker/operate", dockerctl.ContainerOperation)
-		apiV1Group.POST("/docker/prune", dockerctl.ContainerPrune)
+		baseRouter.POST("/docker", baseApi.ContainerCreate)
+		baseRouter.POST("/docker/update", baseApi.ContainerUpdate)
+		baseRouter.POST("/docker/upgrade", baseApi.ContainerUpgrade)
+		baseRouter.POST("/docker/info", baseApi.ContainerInfo)
+		baseRouter.POST("/docker/search", baseApi.SearchContainer)
+		baseRouter.POST("/docker/list", baseApi.ListContainer)
+		baseRouter.GET("/docker/list/stats", baseApi.ContainerStats)
+		baseRouter.GET("/docker/search/log", baseApi.ContainerLogs)
+		baseRouter.GET("/docker/limit", baseApi.LoadResouceLimit)
+		baseRouter.POST("/docker/clean/log", baseApi.CleanContainerLog)
+		baseRouter.POST("/docker/load/log", baseApi.LoadContainerLog)
+		baseRouter.POST("/docker/inspect", baseApi.Inspect)
+		baseRouter.POST("/docker/operate", baseApi.ContainerOperation)
+		baseRouter.POST("/docker/prune", baseApi.ContainerPrune)
 
 		//
 
-		apiV1Group.GET("/image/pull", dockerctl.ImagePull)
-		apiV1Group.GET("/image/push", dockerctl.ImagePush)
-		apiV1Group.GET("/image", dockerctl.ListImage)
-		apiV1Group.POST("/image/search", dockerctl.SearchImage)
-		apiV1Group.POST("/image/pull", dockerctl.ImagePull)
-		apiV1Group.POST("/image/push", dockerctl.ImagePush)
-		apiV1Group.POST("/image/save", dockerctl.ImageSave)
-		apiV1Group.POST("/image/load", dockerctl.ImageLoad)
-		apiV1Group.POST("/image/remove", dockerctl.ImageRemove)
-		apiV1Group.POST("/image/tag", dockerctl.ImageTag)
-		apiV1Group.POST("/image/build", dockerctl.ImageBuild)
+		//baseRouter.GET("/image/pull", baseApi.ImagePull)
+		//baseRouter.GET("/image/push", baseApi.ImagePush)
+		baseRouter.GET("/image", baseApi.ListImage)
+		baseRouter.POST("/image/search", baseApi.SearchImage)
+		baseRouter.POST("/image/pull", baseApi.ImagePull)
+		baseRouter.POST("/image/push", baseApi.ImagePush)
+		baseRouter.POST("/image/save", baseApi.ImageSave)
+		baseRouter.POST("/image/load", baseApi.ImageLoad)
+		baseRouter.POST("/image/remove", baseApi.ImageRemove)
+		baseRouter.POST("/image/tag", baseApi.ImageTag)
+		baseRouter.POST("/image/build", baseApi.ImageBuild)
 
-		apiV1Group.GET("/repo", dockerctl.ListRepo)
-		apiV1Group.POST("/repo/status", dockerctl.CheckRepoStatus)
-		apiV1Group.POST("/repo/search", dockerctl.SearchRepo)
-		apiV1Group.POST("/repo/update", dockerctl.UpdateRepo)
-		apiV1Group.POST("/repo", dockerctl.CreateRepo)
-		apiV1Group.POST("/repo/del", dockerctl.DeleteRepo)
+		baseRouter.GET("/repo", baseApi.ListRepo)
+		baseRouter.POST("/repo/status", baseApi.CheckRepoStatus)
+		baseRouter.POST("/repo/search", baseApi.SearchRepo)
+		baseRouter.POST("/repo/update", baseApi.UpdateRepo)
+		baseRouter.POST("/repo", baseApi.CreateRepo)
+		//baseRouter.POST("/repo/del", baseApi.DELETERepo)
 
+		//
+		baseRouter.GET("/volume", baseApi.ListVolume)
 	}
-	/*apiV1Group.GET("/exec", dockerctl.ContainerWsSsh)
-	apiV1Group.GET("/stats/:id", dockerctl.ContainerStats)
+	/*baseRouter.GET("/exec", baseApi.ContainerWsSsh)
+	baseRouter.GET("/stats/:id", baseApi.ContainerStats)
 
-	apiV1Group.POST("", dockerctl.ContainerCreate)
-	apiV1Group.POST("/update", dockerctl.ContainerUpdate)
-	apiV1Group.POST("/upgrade", dockerctl.ContainerUpgrade)
-	apiV1Group.POST("/info", dockerctl.ContainerInfo)
-	apiV1Group.POST("/search", dockerctl.SearchContainer)
-	apiV1Group.POST("/list", dockerctl.ListContainer)
-	apiV1Group.GET("/list/stats", dockerctl.ContainerListStats)
-	apiV1Group.GET("/search/log", dockerctl.ContainerLogs)
-	apiV1Group.GET("/limit", dockerctl.LoadResourceLimit)
-	apiV1Group.POST("/clean/log", dockerctl.CleanContainerLog)
-	apiV1Group.POST("/load/log", dockerctl.LoadContainerLog)
-	apiV1Group.POST("/inspect", dockerctl.Inspect)
-	apiV1Group.POST("/operate", dockerctl.ContainerOperation)
-	apiV1Group.POST("/prune", dockerctl.ContainerPrune)
+	baseRouter.POST("", baseApi.ContainerCreate)
+	baseRouter.POST("/update", baseApi.ContainerUpdate)
+	baseRouter.POST("/upgrade", baseApi.ContainerUpgrade)
+	baseRouter.POST("/info", baseApi.ContainerInfo)
+	baseRouter.POST("/search", baseApi.SearchContainer)
+	baseRouter.POST("/list", baseApi.ListContainer)
+	baseRouter.GET("/list/stats", baseApi.ContainerListStats)
+	baseRouter.GET("/search/log", baseApi.ContainerLogs)
+	baseRouter.GET("/limit", baseApi.LoadResourceLimit)
+	baseRouter.POST("/clean/log", baseApi.CleanContainerLog)
+	baseRouter.POST("/load/log", baseApi.LoadContainerLog)
+	baseRouter.POST("/inspect", baseApi.Inspect)
+	baseRouter.POST("/operate", baseApi.ContainerOperation)
+	baseRouter.POST("/prune", baseApi.ContainerPrune)
 
-	apiV1Group.GET("/repo", dockerctl.ListRepo)
-	apiV1Group.POST("/repo/status", dockerctl.CheckRepoStatus)
-	apiV1Group.POST("/repo/search", dockerctl.SearchRepo)
-	apiV1Group.POST("/repo/update", dockerctl.UpdateRepo)
-	apiV1Group.POST("/repo", dockerctl.CreateRepo)
-	apiV1Group.POST("/repo/del", dockerctl.DeleteRepo)
+	baseRouter.GET("/repo", baseApi.ListRepo)
+	baseRouter.POST("/repo/status", baseApi.CheckRepoStatus)
+	baseRouter.POST("/repo/search", baseApi.SearchRepo)
+	baseRouter.POST("/repo/update", baseApi.UpdateRepo)
+	baseRouter.POST("/repo", baseApi.CreateRepo)
+	baseRouter.POST("/repo/del", baseRouter.DELETERepo)
 
-	apiV1Group.POST("/compose/search", dockerctl.SearchCompose)
-	apiV1Group.POST("/compose", dockerctl.CreateCompose)
-	apiV1Group.POST("/compose/test", dockerctl.TestCompose)
-	apiV1Group.POST("/compose/operate", dockerctl.OperatorCompose)
-	apiV1Group.POST("/compose/update", dockerctl.ComposeUpdate)
-	apiV1Group.GET("/compose/search/log", dockerctl.ComposeLogs)
+	baseRouter.POST("/compose/search", baseApi.SearchCompose)
+	baseRouter.POST("/compose", baseApi.CreateCompose)
+	baseRouter.POST("/compose/test", baseApi.TestCompose)
+	baseRouter.POST("/compose/operate", baseApi.OperatorCompose)
+	baseRouter.POST("/compose/update", baseApi.ComposeUpdate)
+	baseRouter.GET("/compose/search/log", baseApi.ComposeLogs)
 
-	apiV1Group.GET("/template", dockerctl.ListComposeTemplate)
-	apiV1Group.POST("/template/search", dockerctl.SearchComposeTemplate)
-	apiV1Group.POST("/template/update", dockerctl.UpdateComposeTemplate)
-	apiV1Group.POST("/template", dockerctl.CreateComposeTemplate)
-	apiV1Group.POST("/template/del", dockerctl.DeleteComposeTemplate)
+	baseRouter.GET("/template", baseApi.ListComposeTemplate)
+	baseRouter.POST("/template/search", baseApi.SearchComposeTemplate)
+	baseRouter.POST("/template/update", baseApi.UpdateComposeTemplate)
+	baseRouter.POST("/template", baseApi.CreateComposeTemplate)
+	baseRouter.POST("/template/del", baseRouter.DELETEComposeTemplate)
 
-	apiV1Group.GET("/image", dockerctl.ListImage)
-	apiV1Group.POST("/image/search", dockerctl.SearchImage)
-	apiV1Group.POST("/image/pull", dockerctl.ImagePull)
-	apiV1Group.POST("/image/push", dockerctl.ImagePush)
-	apiV1Group.POST("/image/save", dockerctl.ImageSave)
-	apiV1Group.POST("/image/load", dockerctl.ImageLoad)
-	apiV1Group.POST("/image/remove", dockerctl.ImageRemove)
-	apiV1Group.POST("/image/tag", dockerctl.ImageTag)
-	apiV1Group.POST("/image/build", dockerctl.ImageBuild)
+	baseRouter.GET("/image", baseApi.ListImage)
+	baseRouter.POST("/image/search", baseApi.SearchImage)
+	baseRouter.POST("/image/pull", baseApi.ImagePull)
+	baseRouter.POST("/image/push", baseApi.ImagePush)
+	baseRouter.POST("/image/save", baseApi.ImageSave)
+	baseRouter.POST("/image/load", baseApi.ImageLoad)
+	baseRouter.POST("/image/remove", baseApi.ImageRemove)
+	baseRouter.POST("/image/tag", baseApi.ImageTag)
+	baseRouter.POST("/image/build", baseApi.ImageBuild)
 
-	apiV1Group.GET("/network", dockerctl.ListNetwork)
-	apiV1Group.POST("/network/del", dockerctl.DeleteNetwork)
-	apiV1Group.POST("/network/search", dockerctl.SearchNetwork)
-	apiV1Group.POST("/network", dockerctl.CreateNetwork)
-	apiV1Group.GET("/volume", dockerctl.ListVolume)
-	apiV1Group.POST("/volume/del", dockerctl.DeleteVolume)
-	apiV1Group.POST("/volume/search", dockerctl.SearchVolume)
-	apiV1Group.POST("/volume", dockerctl.CreateVolume)
+	baseRouter.GET("/network", baseApi.ListNetwork)
+	baseRouter.POST("/network/del", baseRouter.DELETENetwork)
+	baseRouter.POST("/network/search", baseApi.SearchNetwork)
+	baseRouter.POST("/network", baseApi.CreateNetwork)
+	baseRouter.GET("/volume", baseApi.ListVolume)
+	baseRouter.POST("/volume/del", baseRouter.DELETEVolume)
+	baseRouter.POST("/volume/search", baseApi.SearchVolume)
+	baseRouter.POST("/volume", baseApi.CreateVolume)
 
-	apiV1Group.GET("/daemonjson", dockerctl.LoadDaemonJson)
-	apiV1Group.GET("/daemonjson/file", dockerctl.LoadDaemonJsonFile)
-	apiV1Group.GET("/docker/status", dockerctl.LoadDockerStatus)
-	apiV1Group.POST("/docker/operate", dockerctl.OperateDocker)
-	apiV1Group.POST("/daemonjson/update", dockerctl.UpdateDaemonJson)
-	apiV1Group.POST("/logoption/update", dockerctl.UpdateLogOption)
-	apiV1Group.POST("/daemonjson/update/byfile", dockerctl.UpdateDaemonJsonByFile)*/
+	baseRouter.GET("/daemonjson", baseApi.LoadDaemonJson)
+	baseRouter.GET("/daemonjson/file", baseApi.LoadDaemonJsonFile)
+	baseRouter.GET("/docker/status", baseApi.LoadDockerStatus)
+	baseRouter.POST("/docker/operate", baseApi.OperateDocker)
+	baseRouter.POST("/daemonjson/update", baseApi.UpdateDaemonJson)
+	baseRouter.POST("/logoption/update", baseApi.UpdateLogOption)
+	baseRouter.POST("/daemonjson/update/byfile", baseApi.UpdateDaemonJsonByFile)*/
 }

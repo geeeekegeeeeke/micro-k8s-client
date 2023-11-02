@@ -1,4 +1,4 @@
-package controllers
+package v1
 
 /**
  * To change this template, choose Tools | Templates
@@ -97,7 +97,7 @@ var (
 )
 
 func init() {
-	fmt.Println("liuyucaho  router list get ")
+	fmt.Println("liuyucaho  routers list get ")
 	var kubeconfig *string
 	if home, _ := os.Getwd(); home != "" {
 		kubeconfig = flag.String("kubeconfig", filepath.Join(home, "conf", "kubeconfig"), "(optional) absolute path to the kubeconfig file")

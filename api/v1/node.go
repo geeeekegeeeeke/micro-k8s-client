@@ -1,4 +1,4 @@
-package controllers
+package v1
 
 import (
 	"context"
@@ -9,14 +9,15 @@ import (
 	"log"
 )
 
-type NodeController struct {
-	Base *BaseController
-}
-
-func (this *NodeController) ListNode(c *gin.Context) {
-	defer this.Base.Catch(NewResponse(c))
+/*
+	type BaseApi struct {
+		Base *BaseController
+	}
+*/
+func (this *BaseApi) ListNode(c *gin.Context) {
+	//defer this.Base.Catch(NewResponse(c))
 	/*
-		fmt.Println("liuyucaho  router list get ")
+		fmt.Println("liuyucaho  routers list get ")
 		var kubeconfig *string
 		if home, _ := os.Getwd(); home != "" {
 			kubeconfig = flag.String("kubeconfig", filepath.Join(home, "conf", "kubeconfig"), "(optional) absolute path to the kubeconfig file")
@@ -45,8 +46,8 @@ func (this *NodeController) ListNode(c *gin.Context) {
 	NewResponse(c).Success(map[string]interface{}{"node": nodes}).Json()
 }
 
-func (this *NodeController) GetNodeInfo(c *gin.Context) {
-	defer this.Base.Catch(NewResponse(c))
+func (this *BaseApi) GetNodeInfo(c *gin.Context) {
+	//defer this.Base.Catch(NewResponse(c))
 	//获取 指定NODE 的详细信息
 	fmt.Println("\n ####### node详细信息 ######")
 	info := filter.NewNodeFilter(c).NodeInfo()

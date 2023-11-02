@@ -1,4 +1,4 @@
-package controllers
+package v1
 
 import (
 	"encoding/base64"
@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-//func (b *DcokerController) WsSsh(c *gin.Context) {
+//func (b *BaseApi) WsSsh(c *gin.Context) {
 //	wsConn, err := upGrader.Upgrade(c.Writer, c.Request, nil)
 //	if err != nil {
 //		log.Fatalln("gin context http handler failed, err: %v", err)
@@ -70,7 +70,7 @@ import (
 //	}
 //}
 
-//func (b *DcokerController) RedisWsSsh(c *gin.Context) {
+//func (b *BaseApi) RedisWsSsh(c *gin.Context) {
 //	wsConn, err := upGrader.Upgrade(c.Writer, c.Request, nil)
 //	if err != nil {
 //		log.Fatalln("gin context http handler failed, err: %v", err)
@@ -120,7 +120,7 @@ import (
 //	}
 //}
 
-func (b *DcokerController) ContainerWsSsh(c *gin.Context) {
+func (b *BaseApi) ContainerWsSsh(c *gin.Context) {
 	wsConn, err := upGrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		log.Fatalln("gin context http handler failed, err: %v", err)

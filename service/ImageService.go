@@ -306,6 +306,7 @@ func (u *ImageService) ImageSave(req dto.ImageSave) error {
 	defer out.Close()
 	file, err := os.OpenFile(fmt.Sprintf("%s/%s.tar", req.Path, req.Name), os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0666)
 	if err != nil {
+		fmt.Println("openfile err !!!", err)
 		return err
 	}
 	defer file.Close()

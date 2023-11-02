@@ -18,6 +18,9 @@ type UpdateDescription struct {
 type OperationWithName struct {
 	Name string `json:"name" validate:"required"`
 }
+type OperationWithYml struct {
+	Yml string `json:"yml" validate:"required"`
+}
 
 type OperateByID struct {
 	ID uint `json:"id" validate:"required"`

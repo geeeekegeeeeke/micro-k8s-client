@@ -1,4 +1,4 @@
-package controllers
+package v1
 
 import (
 	"context"
@@ -9,12 +9,8 @@ import (
 	"reflect"
 )
 
-type IngressController struct {
-	Base *BaseController
-}
-
-func (this *IngressController) ListIngress(c *gin.Context) {
-	defer this.Base.Catch(NewResponse(c))
+func (this *BaseApi) ListIngress(c *gin.Context) {
+	//defer this.Base.Catch(NewResponse(c))
 
 	// https://godoc.org/k8s.io/client-go/kubernetes/typed/core/v1
 	ingresses, err := clientset.ExtensionsV1beta1().Ingresses("").List(context.TODO(), metav1.ListOptions{})
@@ -25,8 +21,8 @@ func (this *IngressController) ListIngress(c *gin.Context) {
 		fmt.Printf("[%d] %s\n", i, ingress.GetName())
 	}
 }
-func (this *IngressController) ListIngressInfo(c *gin.Context) {
-	defer this.Base.Catch(NewResponse(c))
+func (this *BaseApi) ListIngressInfo(c *gin.Context) {
+	//defer this.Base.Catch(NewResponse(c))
 	// https://godoc.org/k8s.io/client-go/kubernetes/typed/core/v1
 	ingress, err := clientset.ExtensionsV1beta1().Ingresses("jx").Get(context.TODO(), "docker-registry", metav1.GetOptions{})
 	if err != nil {

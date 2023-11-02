@@ -50,7 +50,13 @@ type ContainerOperate struct {
 	Volumes         []VolumeHelper `json:"volumes"`
 	Labels          []string       `json:"labels"`
 	Env             []string       `json:"env"`
-	RestartPolicy   string         `json:"restartPolicy"`
+	Tty             bool           `json:"tty"`
+	Network         string         `json:"network"`
+
+	OpenStdin     bool     `json:"openStdin"`
+	ForcePull     bool     `json:"forcePull"`
+	Entrypoint    []string `json:"entrypoint"`
+	RestartPolicy string   `json:"restartPolicy"`
 }
 
 type ContainerUpgrade struct {

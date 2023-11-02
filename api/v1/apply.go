@@ -1,4 +1,4 @@
-package controllers
+package v1
 
 import (
 	"context"
@@ -20,12 +20,8 @@ import (
 	"time"
 )
 
-type ApplyController struct {
-	Base *BaseController
-}
-
-func (this *ApplyController) DeployTomcatApp(c *gin.Context) {
-	defer this.Base.Catch(NewResponse(c))
+func (this *BaseApi) DeployTomcatApp(c *gin.Context) {
+	//defer this.Base.Catch(NewResponse(c))
 	// 设置命名空间和应用名称
 	namespace := "default"
 	appName := "tomcat"
@@ -175,8 +171,8 @@ func createService(clientset *kubernetes.Clientset, namespace, appName string) e
 
 }
 
-func (this *ApplyController) DeployApp(c *gin.Context) {
-	defer this.Base.Catch(NewResponse(c))
+func (this *BaseApi) DeployApp(c *gin.Context) {
+	//defer this.Base.Catch(NewResponse(c))
 	// 定义Deployment对象
 	deployment := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
@@ -253,8 +249,8 @@ func (this *ApplyController) DeployApp(c *gin.Context) {
 func int32Ptr(i int32) *int32 {
 	return &i
 }
-func (this *ApplyController) Namespace(c *gin.Context) {
-	defer this.Base.Catch(NewResponse(c))
+func (this *BaseApi) Namespace(c *gin.Context) {
+	//defer this.Base.Catch(NewResponse(c))
 
 	// https://godoc.org/k8s.io/client-go/kubernetes/typed/core/v1
 	namespaces, err := clientset.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
@@ -266,8 +262,8 @@ func (this *ApplyController) Namespace(c *gin.Context) {
 	}
 	NewResponse(c).Success(map[string]interface{}{}).Json()
 }
-func (this *ApplyController) Secret(c *gin.Context) {
-	defer this.Base.Catch(NewResponse(c))
+func (this *BaseApi) Secret(c *gin.Context) {
+	//defer this.Base.Catch(NewResponse(c))
 
 	secrets, err := clientset.CoreV1().Secrets("").List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
@@ -278,8 +274,8 @@ func (this *ApplyController) Secret(c *gin.Context) {
 	}
 	NewResponse(c).Success(map[string]interface{}{}).Json()
 }
-func (this *ApplyController) SetSecret(c *gin.Context) {
-	defer this.Base.Catch(NewResponse(c))
+func (this *BaseApi) SetSecret(c *gin.Context) {
+	//defer this.Base.Catch(NewResponse(c))
 	data := make(map[string][]byte)
 	data["user"] = []byte("admin")
 	data["password"] = []byte("password")
@@ -302,8 +298,8 @@ func (this *ApplyController) SetSecret(c *gin.Context) {
 	}
 	NewResponse(c).Success(map[string]interface{}{}).Json()
 }
-func (this *ApplyController) ConfigMap(c *gin.Context) {
-	defer this.Base.Catch(NewResponse(c))
+func (this *BaseApi) ConfigMap(c *gin.Context) {
+	//defer this.Base.Catch(NewResponse(c))
 	// kubernetesの設定ファイルのパスを組み立てる
 	configMaps, err := clientset.CoreV1().ConfigMaps("").List(context.TODO(), metav1.ListOptions{})
 	if err != nil {

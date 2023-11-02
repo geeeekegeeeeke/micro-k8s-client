@@ -1,4 +1,4 @@
-package controllers
+package v1
 
 import (
 	"bufio"
@@ -16,11 +16,11 @@ import (
 	"os"
 )
 
-type ClientController struct {
+/*type BaseApi struct {
 	Base *BaseController
-}
+}*/
 
-func (this *ClientController) OperateDeploy(*gin.Context) {
+func (this *BaseApi) OperateDeploy(*gin.Context) {
 
 	deploymentRes := schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"}
 
@@ -154,7 +154,7 @@ func (this *ClientController) OperateDeploy(*gin.Context) {
 	fmt.Println("Deleted deployment.")
 }
 
-func (this *ClientController) CreateDeploy(c *gin.Context) {
+func (this *BaseApi) CreateDeploy(c *gin.Context) {
 	deploymentRes := schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"}
 
 	deployment := &unstructured.Unstructured{
@@ -208,7 +208,7 @@ func (this *ClientController) CreateDeploy(c *gin.Context) {
 	NewResponse(c).Success(map[string]interface{}{"result": result}).Json()
 }
 
-func (this *ClientController) UpdateDeploy(c *gin.Context) {
+func (this *BaseApi) UpdateDeploy(c *gin.Context) {
 	deploymentRes := schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"}
 
 	// Update Deployment
@@ -264,7 +264,7 @@ func (this *ClientController) UpdateDeploy(c *gin.Context) {
 	NewResponse(c).Success(map[string]interface{}{}).Json()
 }
 
-func (this *ClientController) ListDeploy(c *gin.Context) {
+func (this *BaseApi) ListDeploy(c *gin.Context) {
 
 	deploymentRes := schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"}
 
@@ -299,7 +299,7 @@ func prompt() {
 
 }
 
-func (this *ClientController) GetPod(c *gin.Context) {
+func (this *BaseApi) GetPod(c *gin.Context) {
 	//for {
 	// 通过实现 clientset 的 CoreV1Interface 接口列表中的 PodsGetter 接口方法 Pods(namespace string)返回 PodInterface
 	// PodInterface 接口拥有操作 Pod 资源的方法，例如 Create、Update、Get、List 等方法
@@ -325,7 +325,7 @@ func (this *ClientController) GetPod(c *gin.Context) {
 	//}
 
 }
-func (this *ClientController) GetPodInfo(c *gin.Context) {
+func (this *BaseApi) GetPodInfo(c *gin.Context) {
 
 	pods, err := clientset.CoreV1().Pods("").List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
@@ -352,7 +352,7 @@ func (this *ClientController) GetPodInfo(c *gin.Context) {
 	NewResponse(c).Success(map[string]interface{}{"podInfo": podinfo}).Json()
 
 }
-func (this *ClientController) GetImage(c *gin.Context) {
+func (this *BaseApi) GetImage(c *gin.Context) {
 
 	pods, err := clientset.CoreV1().Pods("").List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
@@ -379,7 +379,7 @@ func (this *ClientController) GetImage(c *gin.Context) {
 	NewResponse(c).Success(map[string]interface{}{"podInfo": images}).Json()
 }
 
-func (this *ClientController) GetContainer(c *gin.Context) {
+func (this *BaseApi) GetContainer(c *gin.Context) {
 
 	pods, err := clientset.CoreV1().Pods("").List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
@@ -404,7 +404,7 @@ func (this *ClientController) GetContainer(c *gin.Context) {
 	NewResponse(c).Success(map[string]interface{}{"podInfo": containers}).Json()
 
 }
-func (this *ClientController) GetComponent(c *gin.Context) {
+func (this *BaseApi) GetComponent(c *gin.Context) {
 	// 获取所有组件状态
 	componentStatuses, err := clientset.CoreV1().ComponentStatuses().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {

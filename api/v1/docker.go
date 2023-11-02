@@ -1,4 +1,4 @@
-package controllers
+package v1
 
 import (
 	"errors"
@@ -11,13 +11,10 @@ import (
 	"log"
 )
 
-type DcokerController struct {
-	Base *BaseController
-}
-
 var imageRepoService = service.NewIImageRepoService()
+var dockerService = service.NewIDockerService()
 
-func (b *DcokerController) ListContainer(c *gin.Context) {
+func (b *BaseApi) ListContainer(c *gin.Context) {
 	list, err := service.NewIDockerService().List()
 	if err != nil {
 		NewResponse(c).Fail(constant.CodeErrInternalServer, constant.ErrTypeInternalServer)
@@ -27,9 +24,9 @@ func (b *DcokerController) ListContainer(c *gin.Context) {
 	//helper.SuccessWithData(c, list)
 }
 
-func (this *DcokerController) SearchContainer(c *gin.Context) {
+func (this *BaseApi) SearchContainer(c *gin.Context) {
 	//return func(c *gin.Context) {
-	defer this.Base.Catch(NewResponse(c))
+	//defer this.Base.Catch(NewResponse(c))
 	var req dto.PageContainer
 	fmt.Println("1111111111111111111")
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -62,7 +59,7 @@ func (this *DcokerController) SearchContainer(c *gin.Context) {
 
 }
 
-//	func (h *DcokerController) ContainerWsSsh(c *gin.Context) {
+//	func (h *BaseApi) ContainerWsSsh(c *gin.Context) {
 //		//return func(c *gin.Context) {
 //		wsConn, err := wsSsh.UpGrader.Upgrade(c.Writer, c.Request, nil)
 //		if err != nil {
@@ -131,7 +128,7 @@ func (this *DcokerController) SearchContainer(c *gin.Context) {
 //		}
 //
 // }
-func (b *DcokerController) LoadContainerLog(c *gin.Context) {
+func (b *BaseApi) LoadContainerLog(c *gin.Context) {
 	var req dto.OperationWithNameAndType
 	if err := c.ShouldBindJSON(&req); err != nil {
 		NewResponse(c).error(constant.CodeErrBadRequest, constant.ErrTypeInvalidParams, err)
@@ -140,7 +137,7 @@ func (b *DcokerController) LoadContainerLog(c *gin.Context) {
 	content := service.NewIDockerService().LoadContainerLogs(req)
 	NewResponse(c).Success(map[string]interface{}{"page": content}).Json()
 }
-func (b *DcokerController) ContainerLogs(c *gin.Context) {
+func (b *BaseApi) ContainerLogs(c *gin.Context) {
 	wsConn, err := upGrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		log.Fatalln("gin context http handler failed, err: %v", err)
@@ -160,7 +157,7 @@ func (b *DcokerController) ContainerLogs(c *gin.Context) {
 }
 
 /* 容器监控*/
-func (h *DcokerController) ContainerStats(c *gin.Context) {
+func (h *BaseApi) ContainerStats(c *gin.Context) {
 	containerID, ok := c.Params.Get("id")
 	if !ok {
 		NewResponse(c).error(constant.CodeErrBadRequest, constant.ErrTypeInvalidParams, errors.New("error container id in path"))
@@ -176,7 +173,7 @@ func (h *DcokerController) ContainerStats(c *gin.Context) {
 	//helper.SuccessWithData(c, result)
 }
 
-func (h *DcokerController) ContainerCreate(c *gin.Context) {
+func (h *BaseApi) ContainerCreate(c *gin.Context) {
 	//return func(c *gin.Context) {
 	var req dto.ContainerOperate
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -188,13 +185,14 @@ func (h *DcokerController) ContainerCreate(c *gin.Context) {
 		return
 	}*/
 	if err := service.NewIDockerService().ContainerCreate(req); err != nil {
+		log.Fatalln(err)
 		NewResponse(c).error(constant.CodeErrInternalServer, constant.ErrTypeInternalServer, err)
-		return
 	}
-	//helper.SuccessWithData(c, nil)
+	log.Println("-------------------------")
+	NewResponse(c).Success(nil).Json()
 }
 
-func (h *DcokerController) ContainerUpgrade(c *gin.Context) {
+func (h *BaseApi) ContainerUpgrade(c *gin.Context) {
 	//return func(c *gin.Context) {
 
 	var req dto.ContainerUpgrade
@@ -214,7 +212,7 @@ func (h *DcokerController) ContainerUpgrade(c *gin.Context) {
 }
 
 // }
-func (h *DcokerController) ContainerPrune(c *gin.Context) {
+func (h *BaseApi) ContainerPrune(c *gin.Context) {
 	//return func(c *gin.Context) {
 	var req dto.ContainerPrune
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -235,7 +233,7 @@ func (h *DcokerController) ContainerPrune(c *gin.Context) {
 }
 
 // }
-func (h *DcokerController) CleanContainerLog(c *gin.Context) {
+func (h *BaseApi) CleanContainerLog(c *gin.Context) {
 	//return func(c *gin.Context) {
 	var req dto.OperationWithName
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -254,17 +252,17 @@ func (h *DcokerController) CleanContainerLog(c *gin.Context) {
 }
 
 // }
-func (h *DcokerController) ContainerOperation(c *gin.Context) {
+func (h *BaseApi) ContainerOperation(c *gin.Context) {
 	//return func(c *gin.Context) {
-	//func (b *DcokerController) ContainerOperation(c *gin.Context) {
+	//func (b *BaseApi) ContainerOperation(c *gin.Context) {
 	var req dto.ContainerOperation
 	if err := c.ShouldBindJSON(&req); err != nil {
 		NewResponse(c).error(constant.CodeErrBadRequest, constant.ErrTypeInvalidParams, err)
 		return
 	}
-	if err := global.VALID.Struct(req); err != nil {
+	/*	if err := global.VALID.Struct(req); err != nil {
 		NewResponse(c).error(constant.CodeErrBadRequest, constant.ErrTypeInvalidParams, err)
-	}
+	}*/
 	if err := service.NewIDockerService().ContainerOperation(req); err != nil {
 		NewResponse(c).error(constant.CodeErrInternalServer, constant.ErrTypeInternalServer, err)
 		return
@@ -274,9 +272,9 @@ func (h *DcokerController) ContainerOperation(c *gin.Context) {
 
 //}
 
-func (h *DcokerController) Inspect(c *gin.Context) {
+func (h *BaseApi) Inspect(c *gin.Context) {
 	//return func(c *gin.Context) {
-	//func (b *DcokerController) Inspect(c *gin.Context) {
+	//func (b *BaseApi) Inspect(c *gin.Context) {
 	var req dto.InspectReq
 	if err := c.ShouldBindJSON(&req); err != nil {
 		NewResponse(c).error(constant.CodeErrBadRequest, constant.ErrTypeInvalidParams, err)
@@ -292,13 +290,13 @@ func (h *DcokerController) Inspect(c *gin.Context) {
 		NewResponse(c).error(constant.CodeErrInternalServer, constant.ErrTypeInternalServer, err)
 		return
 	}
-	NewResponse(c).Success(map[string]interface{}{"result": result}).Json()
+	NewResponse(c).Success(result).Json()
 }
 
 // }
-func (h *DcokerController) ContainerUpdate(c *gin.Context) {
+func (h *BaseApi) ContainerUpdate(c *gin.Context) {
 	//return func(c *gin.Context) {
-	//func (b *DcokerController) ContainerUpdate(c *gin.Context) {
+	//func (b *BaseApi) ContainerUpdate(c *gin.Context) {
 	var req dto.ContainerOperate
 	if err := c.ShouldBindJSON(&req); err != nil {
 		NewResponse(c).error(constant.CodeErrBadRequest, constant.ErrTypeInvalidParams, err)
@@ -316,9 +314,9 @@ func (h *DcokerController) ContainerUpdate(c *gin.Context) {
 }
 
 // }
-func (h *DcokerController) ContainerInfo(c *gin.Context) {
+func (h *BaseApi) ContainerInfo(c *gin.Context) {
 	//return func(c *gin.Context) {
-	//func (b *DcokerController) ContainerInfo(c *gin.Context) {
+	//func (b *BaseApi) ContainerInfo(c *gin.Context) {
 	var req dto.OperationWithName
 	if err := c.ShouldBindJSON(&req); err != nil {
 		NewResponse(c).error(constant.CodeErrBadRequest, constant.ErrTypeInvalidParams, err)
@@ -333,24 +331,24 @@ func (h *DcokerController) ContainerInfo(c *gin.Context) {
 		NewResponse(c).error(constant.CodeErrInternalServer, constant.ErrTypeInternalServer, err)
 		return
 	}
-	NewResponse(c).Success(map[string]interface{}{"data": data}).Json()
+	NewResponse(c).Success(data).Json()
 
 }
 
-func (h *DcokerController) LoadResouceLimit(c *gin.Context) {
+func (h *BaseApi) LoadResouceLimit(c *gin.Context) {
 	//return func(c *gin.Context) {
-	//func (b *DcokerController) LoadResouceLimit(c *gin.Context) {
+	//func (b *BaseApi) LoadResouceLimit(c *gin.Context) {
 	data, err := service.NewIDockerService().LoadResouceLimit()
 	if err != nil {
 		NewResponse(c).error(constant.CodeErrInternalServer, constant.ErrTypeInternalServer, err)
 		return
 	}
-	NewResponse(c).Success(map[string]interface{}{"data": data}).Json()
+	NewResponse(c).Success(data).Json()
 
 }
-func (h *DcokerController) pconfigContainerLogs(c *gin.Context) {
+func (h *BaseApi) pconfigContainerLogs(c *gin.Context) {
 	//return func(c *gin.Context) {
-	//func (b *DcokerController) ContainerLogs(c *gin.Context) {
+	//func (b *BaseApi) ContainerLogs(c *gin.Context) {
 	/*wsConn, err := wsSsh.UpGrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		//global.LOG.Errorf("gin context http handler failed, err: %v", err)
@@ -370,9 +368,9 @@ func (h *DcokerController) pconfigContainerLogs(c *gin.Context) {
 }
 
 // }
-func (h *DcokerController) ListImage(c *gin.Context) {
+func (h *BaseApi) ListImage(c *gin.Context) {
 	//return func(c *gin.Context) {
-	//func (b *DcokerController) ListImage(c *gin.Context) {
+	//func (b *BaseApi) ListImage(c *gin.Context) {
 	list, err := service.NewIImageService().List()
 	if err != nil {
 		NewResponse(c).error(constant.CodeErrInternalServer, constant.ErrTypeInternalServer, err)
@@ -383,9 +381,9 @@ func (h *DcokerController) ListImage(c *gin.Context) {
 }
 
 // }
-func (h *DcokerController) SearchImage(c *gin.Context) {
+func (h *BaseApi) SearchImage(c *gin.Context) {
 	//return func(c *gin.Context) {
-	//func (b *DcokerController) SearchImage(c *gin.Context) {
+	//func (b *BaseApi) SearchImage(c *gin.Context) {
 	var req dto.SearchWithPage
 	if err := c.ShouldBindJSON(&req); err != nil {
 		NewResponse(c).error(constant.CodeErrBadRequest, constant.ErrTypeInvalidParams, err)
@@ -412,9 +410,9 @@ func (h *DcokerController) SearchImage(c *gin.Context) {
 	})*/
 }
 
-func (h *DcokerController) ImageBuild(c *gin.Context) {
+func (h *BaseApi) ImageBuild(c *gin.Context) {
 	//return func(c *gin.Context) {
-	//func (b *DcokerController) ImageBuild(c *gin.Context) {
+	//func (b *BaseApi) ImageBuild(c *gin.Context) {
 	var req dto.ImageBuild
 	if err := c.ShouldBindJSON(&req); err != nil {
 		NewResponse(c).error(constant.CodeErrBadRequest, constant.ErrTypeInvalidParams, err)
@@ -431,12 +429,12 @@ func (h *DcokerController) ImageBuild(c *gin.Context) {
 		return
 	}
 
-	NewResponse(c).Success(map[string]interface{}{"data": log}).Json()
+	NewResponse(c).Success(log).Json()
 }
 
-func (h *DcokerController) ImagePull(c *gin.Context) {
+func (h *BaseApi) ImagePull(c *gin.Context) {
 	//return func(c *gin.Context) {
-	//func (b *DcokerController) ImagePull(c *gin.Context) {
+	//func (b *BaseApi) ImagePull(c *gin.Context) {
 	var req dto.ImagePull
 	if err := c.ShouldBindJSON(&req); err != nil {
 		NewResponse(c).error(constant.CodeErrBadRequest, constant.ErrTypeInvalidParams, err)
@@ -456,9 +454,9 @@ func (h *DcokerController) ImagePull(c *gin.Context) {
 	NewResponse(c).Success(logPath).Json()
 
 }
-func (h *DcokerController) ImagePush(c *gin.Context) {
+func (h *BaseApi) ImagePush(c *gin.Context) {
 	//return func(c *gin.Context) {
-	//func (b *DcokerController) ImagePush(c *gin.Context) {
+	//func (b *BaseApi) ImagePush(c *gin.Context) {
 	var req dto.ImagePush
 	if err := c.ShouldBindJSON(&req); err != nil {
 		NewResponse(c).error(constant.CodeErrBadRequest, constant.ErrTypeInvalidParams, err)
@@ -478,9 +476,9 @@ func (h *DcokerController) ImagePush(c *gin.Context) {
 	NewResponse(c).Success(logPath).Json()
 
 }
-func (h *DcokerController) ImageRemove(c *gin.Context) {
+func (h *BaseApi) ImageRemove(c *gin.Context) {
 	//return func(c *gin.Context) {
-	//func (b *DcokerController) ImageRemove(c *gin.Context) {
+	//func (b *BaseApi) ImageRemove(c *gin.Context) {
 	var req dto.BatchDelete
 	if err := c.ShouldBindJSON(&req); err != nil {
 		NewResponse(c).error(constant.CodeErrBadRequest, constant.ErrTypeInvalidParams, err)
@@ -498,13 +496,13 @@ func (h *DcokerController) ImageRemove(c *gin.Context) {
 	NewResponse(c).Success(nil).Json()
 
 }
-func (h *DcokerController) ImageSave(c *gin.Context) {
+func (h *BaseApi) ImageSave(c *gin.Context) {
 	//return func(c *gin.Context) {
-	//func (b *DcokerController) ImageSave(c *gin.Context) {
+	//func (b *BaseApi) ImageSave(c *gin.Context) {
 	var req dto.ImageSave
 	if err := c.ShouldBindJSON(&req); err != nil {
-		NewResponse(c).error(constant.CodeErrBadRequest, constant.ErrTypeInvalidParams, err)
-		return
+		NewResponse(c).error(constant.CodeErrBadRequest, constant.ErrTypeInvalidParams, err).Json()
+		//return
 	}
 	/*	if err := global.VALID.Struct(req); err != nil {
 			NewResponse(c).error(constant.CodeErrBadRequest, constant.ErrTypeInvalidParams, err)
@@ -512,15 +510,15 @@ func (h *DcokerController) ImageSave(c *gin.Context) {
 		}
 	*/
 	if err := service.NewIImageService().ImageSave(req); err != nil {
-		NewResponse(c).error(constant.CodeErrInternalServer, constant.ErrTypeInternalServer, err)
+		NewResponse(c).error(constant.CodeErrInternalServer, constant.ErrTypeInternalServer, err).Json()
 		return
 	}
 	NewResponse(c).Success(map[string]interface{}{}).Json()
 
 }
-func (h *DcokerController) ImageTag(c *gin.Context) {
+func (h *BaseApi) ImageTag(c *gin.Context) {
 	//return func(c *gin.Context) {
-	//func (b *DcokerController) ImageTag(c *gin.Context) {
+	//func (b *BaseApi) ImageTag(c *gin.Context) {
 	var req dto.ImageTag
 	if err := c.ShouldBindJSON(&req); err != nil {
 		NewResponse(c).error(constant.CodeErrBadRequest, constant.ErrTypeInvalidParams, err)
@@ -538,9 +536,9 @@ func (h *DcokerController) ImageTag(c *gin.Context) {
 	NewResponse(c).Success(map[string]interface{}{}).Json()
 }
 
-func (h *DcokerController) ImageLoad(c *gin.Context) {
+func (h *BaseApi) ImageLoad(c *gin.Context) {
 	//return func(c *gin.Context) {
-	//func (b *DcokerController) (c *gin.Context) {
+	//func (b *BaseApi) (c *gin.Context) {
 	var req dto.ImageLoad
 	if err := c.ShouldBindJSON(&req); err != nil {
 		NewResponse(c).error(constant.CodeErrBadRequest, constant.ErrTypeInvalidParams, err)
@@ -570,7 +568,7 @@ func (h *DcokerController) ImageLoad(c *gin.Context) {
 // @Success 200 {object} dto.PageResult
 // @Security ApiKeyAuth
 // @Router /containers/repo/search [post]
-func (b *DcokerController) SearchRepo(c *gin.Context) {
+func (b *BaseApi) SearchRepo(c *gin.Context) {
 	var req dto.SearchWithPage
 	if err := c.ShouldBindJSON(&req); err != nil {
 		NewResponse(c).error(constant.CodeErrBadRequest, constant.ErrTypeInvalidParams, err)
@@ -600,7 +598,7 @@ func (b *DcokerController) SearchRepo(c *gin.Context) {
 // @Success 200 {array} dto.ImageRepoOption
 // @Security ApiKeyAuth
 // @Router /containers/repo [get]
-func (b *DcokerController) ListRepo(c *gin.Context) {
+func (b *BaseApi) ListRepo(c *gin.Context) {
 	list, err := imageRepoService.List()
 	if err != nil {
 		NewResponse(c).error(constant.CodeErrInternalServer, constant.ErrTypeInternalServer, err)
@@ -619,7 +617,7 @@ func (b *DcokerController) ListRepo(c *gin.Context) {
 // @Success 200
 // @Security ApiKeyAuth
 // @Router /containers/repo/status [get]
-func (b *DcokerController) CheckRepoStatus(c *gin.Context) {
+func (b *BaseApi) CheckRepoStatus(c *gin.Context) {
 	var req dto.OperateByID
 	if err := c.ShouldBindJSON(&req); err != nil {
 		NewResponse(c).error(constant.CodeErrBadRequest, constant.ErrTypeInvalidParams, err)
@@ -646,16 +644,16 @@ func (b *DcokerController) CheckRepoStatus(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Router /containers/repo [post]
 // @x-panel-log {"bodyKeys":["name"],"paramKeys":[],"BeforeFunctions":[],"formatZH":"创建镜像仓库 [name]","formatEN":"create image repo [name]"}
-func (b *DcokerController) CreateRepo(c *gin.Context) {
+func (b *BaseApi) CreateRepo(c *gin.Context) {
 	var req dto.ImageRepoCreate
 	if err := c.ShouldBindJSON(&req); err != nil {
 		NewResponse(c).error(constant.CodeErrBadRequest, constant.ErrTypeInvalidParams, err)
 		return
 	}
-	if err := global.VALID.Struct(req); err != nil {
+	/*if err := global.VALID.Struct(req); err != nil {
 		NewResponse(c).error(constant.CodeErrBadRequest, constant.ErrTypeInvalidParams, err)
 		return
-	}
+	}*/
 	if err := imageRepoService.Create(req); err != nil {
 		NewResponse(c).error(constant.CodeErrInternalServer, constant.ErrTypeInternalServer, err)
 		return
@@ -673,7 +671,7 @@ func (b *DcokerController) CreateRepo(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Router /containers/repo/del [post]
 // @x-panel-log {"bodyKeys":["ids"],"paramKeys":[],"BeforeFunctions":[{"input_column":"id","input_value":"ids","isList":true,"db":"image_repos","output_column":"name","output_value":"names"}],"formatZH":"删除镜像仓库 [names]","formatEN":"delete image repo [names]"}
-func (b *DcokerController) DeleteRepo(c *gin.Context) {
+func (b *BaseApi) DeleteRepo(c *gin.Context) {
 	var req dto.ImageRepoDelete
 	if err := c.ShouldBindJSON(&req); err != nil {
 		NewResponse(c).error(constant.CodeErrBadRequest, constant.ErrTypeInvalidParams, err)
@@ -701,7 +699,7 @@ func (b *DcokerController) DeleteRepo(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Router /containers/repo/update [post]
 // @x-panel-log {"bodyKeys":["id"],"paramKeys":[],"BeforeFunctions":[{"input_column":"id","input_value":"id","isList":false,"db":"image_repos","output_column":"name","output_value":"name"}],"formatZH":"更新镜像仓库 [name]","formatEN":"update image repo information [name]"}
-func (b *DcokerController) UpdateRepo(c *gin.Context) {
+func (b *BaseApi) UpdateRepo(c *gin.Context) {
 	var req dto.ImageRepoUpdate
 	if err := c.ShouldBindJSON(&req); err != nil {
 		NewResponse(c).error(constant.CodeErrBadRequest, constant.ErrTypeInvalidParams, err)
@@ -717,4 +715,21 @@ func (b *DcokerController) UpdateRepo(c *gin.Context) {
 		return
 	}
 	NewResponse(c).Success(nil).Json()
+}
+
+// @Tags Container Volume
+// @Summary List volumes
+// @Description 获取容器存储卷列表
+// @Accept json
+// @Produce json
+// @Success 200 {array} dto.Options
+// @Security ApiKeyAuth
+// @Router /containers/volume [get]
+func (b *BaseApi) ListVolume(c *gin.Context) {
+	list, err := dockerService.ListVolume()
+	if err != nil {
+		NewResponse(c).error(constant.CodeErrInternalServer, constant.ErrTypeInternalServer, err)
+		return
+	}
+	NewResponse(c).Success(list).Json()
 }

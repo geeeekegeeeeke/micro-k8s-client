@@ -1,3 +1,8 @@
 package service
 
-func init() {}
+import "gin-dubbogo-consumer/repo"
+
+func init() {
+	commonRepo = repo.NewCommonRepo()
+
+}
