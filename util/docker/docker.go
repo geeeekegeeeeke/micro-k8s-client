@@ -25,8 +25,12 @@ func NewClient() (Client, error) {
 	}, nil
 }
 
-func NewDockerClient() (*client.Client, error) {
-	host := "tcp://192.168.1.120:2375"
+func NewDockerClient( /*host string*/ ) (*client.Client, error) {
+	//if host  !="" && len(host)!=0{
+	//
+	//}
+	//defaulthost :=host
+	host := "tcp://192.168.0.16:2375"
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithHost(host), client.WithAPIVersionNegotiation())
 	if err != nil {
 		return nil, err

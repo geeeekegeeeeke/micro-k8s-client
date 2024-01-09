@@ -34,6 +34,15 @@ func (b *BaseApi) Update(c *gin.Context) {
 	}*/
 
 }
+func (b *BaseApi) delete(c *gin.Context) {
+	//var req request.AddrRuleUpdate
+	fmt.Println("hello world")
+	/*if err := c.ShouldBindJSON(&req); err != nil {
+		NewResponse(c).error(constant.CodeErrBadRequest, constant.ErrTypeInvalidParams, err)
+		return
+	}*/
+
+}
 func (b *BaseApi) Get(c *gin.Context) {
 	//var req request.AddrRuleUpdate
 	fmt.Println("hello world")

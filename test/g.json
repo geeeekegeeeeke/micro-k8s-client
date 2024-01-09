@@ -1,0 +1,27 @@
+{
+  "results": [
+    {
+      "source": {
+        "path": "/src/go.mod",
+        "type": "lockfile"
+      },
+      "packages": [
+        {
+          "vulnerabilities": [
+            {
+              "name": "stdlib",
+              "version": "1.20.10\n",
+              "ecosystem": "Go",
+              "commit": ""
+            },{
+              "name": "stdlib",
+              "version": "1.20.10\n",
+              "ecosystem": "Go",
+              "commit": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
