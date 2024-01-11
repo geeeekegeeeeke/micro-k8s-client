@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"fmt"
 	"gin-dubbogo-consumer/global"
 	"gin-dubbogo-consumer/model"
 )
@@ -46,13 +47,17 @@ func (k K8sClusterRepo) Create(group *model.K8sCluster) error {
 }
 
 func (k K8sClusterRepo) Update(id uint, vars map[string]interface{}) error {
-	//TODO implement me
-	panic("implement me")
+	return global.DB.Model(&model.K8sCluster{}).Where("id = ?", id).Updates(vars).Error
 }
 
 func (k K8sClusterRepo) Delete(opts ...DBOption) error {
-	//TODO implement me
-	panic("implement me")
+	db := global.DB
+	for _, opt := range opts {
+		db = opt(db)
+	}
+	fmt.Println("db")
+	fmt.Println(db)
+	return db.Delete(&model.K8sCluster{}).Error
 }
 
 func (k K8sClusterRepo) CancelDefault(groupType string) error {

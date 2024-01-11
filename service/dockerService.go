@@ -11,6 +11,7 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/api/types/network"
+	"github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
 	"github.com/docker/go-connections/nat"
 	"github.com/gorilla/websocket"
@@ -51,7 +52,9 @@ func (u *DockerService) ListVolume() ([]dto.Options, error) {
 	if err != nil {
 		return nil, err
 	}
-	list, err := client.VolumeList(context.TODO(), filters.NewArgs())
+	list, err := client.VolumeList(context.TODO(), volume.ListOptions{
+		filters.NewArgs(),
+	})
 	if err != nil {
 		return nil, err
 	}

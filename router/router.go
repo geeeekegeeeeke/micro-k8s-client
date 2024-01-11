@@ -1,7 +1,8 @@
 package router
 
 import (
-	"gin-dubbogo-consumer/api/v1"
+	v1 "gin-dubbogo-consumer/api/v1"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,6 +27,7 @@ func (a *K8sRouter) InitDockerRouter(Router *gin.RouterGroup) {
 		//var baseApi controllers.DcokerDeployController
 		var dockerDeployctl v1.DcokerDeployController
 		baseApi := Router.Group("/v1/resource")*/
+
 	baseRouter := Router.Group("")
 	baseApi := v1.ApiGroupApp.BaseApi
 	{

@@ -3,16 +3,16 @@ package helper
 import (
 	"context"
 	"fmt"
+	"gin-dubbogo-consumer/buserr"
+	"gin-dubbogo-consumer/constant"
+	"gin-dubbogo-consumer/dto"
+	"gin-dubbogo-consumer/global"
+	"gin-dubbogo-consumer/i18n"
 	"net/http"
 	"strconv"
 
-	"github.com/1Panel-dev/1Panel/backend/global"
 	"gorm.io/gorm"
 
-	"github.com/1Panel-dev/1Panel/backend/app/dto"
-	"github.com/1Panel-dev/1Panel/backend/buserr"
-	"github.com/1Panel-dev/1Panel/backend/constant"
-	"github.com/1Panel-dev/1Panel/backend/i18n"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 )

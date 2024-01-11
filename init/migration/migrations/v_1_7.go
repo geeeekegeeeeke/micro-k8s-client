@@ -1,7 +1,7 @@
 package migrations
 
 import (
-	"github.com/1Panel-dev/1Panel/backend/app/model"
+	"gin-dubbogo-consumer/model"
 	"github.com/go-gormigrate/gormigrate/v2"
 	"gorm.io/gorm"
 )

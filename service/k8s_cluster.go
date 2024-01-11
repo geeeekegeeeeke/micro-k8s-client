@@ -1,8 +1,10 @@
 package service
 
 import (
+	"fmt"
 	"gin-dubbogo-consumer/constant"
 	"gin-dubbogo-consumer/dto"
+	"gin-dubbogo-consumer/model"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 )
@@ -12,6 +14,7 @@ type IK8sClusterService interface {
 	Create(req dto.ClusterCreate) error
 	Update(req dto.ClusterUpdate) error
 	Delete(id uint) error
+	Get(id uint) (dto.ClusterInfo, error)
 }
 
 // type K8sClusterService struct{}
@@ -26,19 +29,19 @@ func NewIK8sClusterService() IK8sClusterService {
 }
 
 func (u *K8sClusterService) List(req dto.ClusterSearch) ([]dto.ClusterInfo, error) {
-	groups, err := k8sClusterRepo.GetList(commonRepo.WithByName(req.Name), commonRepo.WithOrderBy("is_default desc"), commonRepo.WithOrderBy("created_at desc"))
+	groups, err := k8sClusterRepo.GetList(commonRepo.WithOrderBy("created_at desc"))
 	if err != nil {
 		return nil, constant.ErrRecordNotFound
 	}
-	var dtoUsers []dto.ClusterInfo
+	var dtoClusterInfo []dto.ClusterInfo
 	for _, group := range groups {
 		var item dto.ClusterInfo
 		if err := copier.Copy(&item, &group); err != nil {
 			return nil, errors.WithMessage(constant.ErrStructTransform, err.Error())
 		}
-		dtoUsers = append(dtoUsers, item)
+		dtoClusterInfo = append(dtoClusterInfo, item)
 	}
-	return dtoUsers, err
+	return dtoClusterInfo, err
 }
 
 func (u *K8sClusterService) Create(req dto.ClusterCreate) error {
@@ -56,17 +59,27 @@ func (u *K8sClusterService) Create(req dto.ClusterCreate) error {
 }
 
 func (u *K8sClusterService) Update(req dto.ClusterUpdate) error {
-
 	upMap := make(map[string]interface{})
 	upMap["name"] = req.Name
-	//upMap["is_default"] = req.IsDefault
-
+	upMap["KubeConfig"] = req.KubeConfig
+	upMap["description"] = req.Description
 	return k8sClusterRepo.Update(req.ID, upMap)
 }
 func (u *K8sClusterService) Delete(id uint) error {
 	group, _ := k8sClusterRepo.Get(commonRepo.WithByID(id))
+	fmt.Println("group")
+	fmt.Println(group)
 	if group.ID == 0 {
 		return constant.ErrRecordNotFound
 	}
 	return k8sClusterRepo.Delete(commonRepo.WithByID(id))
+
+}
+func (u *K8sClusterService) Get(id uint) (dto.ClusterInfo, error) {
+	group, _ := k8sClusterRepo.Get(commonRepo.WithByID(id))
+	if group.ID == 0 {
+		return dto.ClusterInfo{}, constant.ErrRecordNotFound
+	}
+	baseModel := model.BaseModel{CreatedAt: group.CreatedAt}
+	return dto.ClusterInfo{ID: group.ID, Name: group.Name, Description: group.Description, KubeConfig: group.KubeConfig, BaseModel: baseModel}, nil
 }
