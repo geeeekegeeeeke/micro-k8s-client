@@ -3,9 +3,10 @@ package common
 import (
 	"crypto/rand"
 	"fmt"
-	"gin-dubbogo-consumer/util/cmd"
+	"github.com/mozillazg/go-pinyin"
 	"io"
 	mathRand "math/rand"
+	"micro-k8s-client/util/cmd"
 	"net"
 	"reflect"
 	"regexp"
@@ -13,8 +14,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/mozillazg/go-pinyin"
 )
 
 func CompareVersion(version1 string, version2 string) bool {

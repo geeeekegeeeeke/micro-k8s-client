@@ -1,8 +1,8 @@
 package router
 
 import (
-	v1 "gin-dubbogo-consumer/api/v1"
 	"github.com/gin-gonic/gin"
+	v1 "micro-k8s-client/api/v1"
 )
 
 type K8sRouter struct {

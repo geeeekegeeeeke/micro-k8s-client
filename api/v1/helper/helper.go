@@ -3,11 +3,11 @@ package helper
 import (
 	"context"
 	"fmt"
-	"gin-dubbogo-consumer/buserr"
-	"gin-dubbogo-consumer/constant"
-	"gin-dubbogo-consumer/dto"
-	"gin-dubbogo-consumer/global"
-	"gin-dubbogo-consumer/i18n"
+	"micro-k8s-client/buserr"
+	"micro-k8s-client/constant"
+	"micro-k8s-client/dto"
+	"micro-k8s-client/global"
+	"micro-k8s-client/i18n"
 	"net/http"
 	"strconv"
 

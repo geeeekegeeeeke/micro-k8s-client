@@ -3,8 +3,8 @@ package repo
 import (
 	"context"
 	"fmt"
-	"gin-dubbogo-consumer/constant"
-	"gin-dubbogo-consumer/global"
+	"micro-k8s-client/constant"
+	"micro-k8s-client/global"
 	"time"
 
 	"gorm.io/gorm"

@@ -1,4 +1,4 @@
-module gin-dubbogo-consumer
+module micro-k8s-client
 
 go 1.20
 
@@ -24,7 +24,6 @@ require (
 	github.com/nicksnyder/go-i18n/v2 v2.1.2
 	github.com/opencontainers/image-spec v1.1.0-rc5
 	github.com/pkg/errors v0.9.1
-	github.com/robfig/cron/v3 v3.0.1
 	github.com/shirou/gopsutil v2.19.12+incompatible
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/viper v1.16.0
@@ -39,10 +38,7 @@ require (
 //k8s.io/helm v2.17.0+incompatible // indirect
 )
 
-require (
-	github.com/gorilla/mux v1.8.1 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20230822172742-b8732ec3820d // indirect
-)
+require google.golang.org/genproto/googleapis/rpc v0.0.0-20230822172742-b8732ec3820d // indirect
 
 require (
 	//github.com/1Panel-dev/1Panel v1.7.4 // indirect

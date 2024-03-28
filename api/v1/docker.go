@@ -3,12 +3,12 @@ package v1
 import (
 	"errors"
 	"fmt"
-	"gin-dubbogo-consumer/constant"
-	dto "gin-dubbogo-consumer/dto"
-	"gin-dubbogo-consumer/global"
-	"gin-dubbogo-consumer/service"
 	"github.com/gin-gonic/gin"
 	"log"
+	"micro-k8s-client/constant"
+	dto "micro-k8s-client/dto"
+	"micro-k8s-client/global"
+	"micro-k8s-client/service"
 )
 
 var imageRepoService = service.NewIImageRepoService()

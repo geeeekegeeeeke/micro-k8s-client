@@ -4,9 +4,9 @@ import (
 	"bufio"
 	"context"
 	"fmt"
-	"gin-dubbogo-consumer/filter"
 	"github.com/gin-gonic/gin"
 	apiv1 "k8s.io/api/core/v1"
+	"micro-k8s-client/filter"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"

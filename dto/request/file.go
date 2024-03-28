@@ -1,7 +1,7 @@
 package request
 
 import (
-	dto "gin-dubbogo-consumer/dto"
+	dto "micro-k8s-client/dto"
 )
 
 type FileOption struct {

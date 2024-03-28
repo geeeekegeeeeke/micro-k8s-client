@@ -1,7 +1,7 @@
 package constant
 
 import (
-	"gin-dubbogo-consumer/global"
+	"micro-k8s-client/global"
 	"path"
 )
 

@@ -1,10 +1,10 @@
 package routers
 
 import (
-	rou "gin-dubbogo-consumer/router"
 	ginI18n "github.com/gin-contrib/i18n"
 	"github.com/gin-gonic/gin"
 	"html/template"
+	rou "micro-k8s-client/router"
 )
 
 func Routers() *gin.Engine {

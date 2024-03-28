@@ -1,7 +1,7 @@
 package filter
 
 import (
-	"gin-dubbogo-consumer/exception"
+	"micro-k8s-client/exception"
 	"regexp"
 
 	"github.com/gin-gonic/gin"

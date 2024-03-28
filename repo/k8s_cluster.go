@@ -2,8 +2,8 @@ package repo
 
 import (
 	"fmt"
-	"gin-dubbogo-consumer/global"
-	"gin-dubbogo-consumer/model"
+	"micro-k8s-client/global"
+	"micro-k8s-client/model"
 )
 
 type K8sClusterRepo struct{}

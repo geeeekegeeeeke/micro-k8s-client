@@ -1,9 +1,9 @@
 package migrations
 
 import (
-	"gin-dubbogo-consumer/model"
 	"github.com/go-gormigrate/gormigrate/v2"
 	"gorm.io/gorm"
+	"micro-k8s-client/model"
 )
 
 var AddDefaultNetwork = &gormigrate.Migration{

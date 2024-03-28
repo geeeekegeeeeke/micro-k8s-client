@@ -1,6 +1,6 @@
 package request
 
-import dto "gin-dubbogo-consumer/dto"
+import dto "micro-k8s-client/dto"
 
 type RuleSearch struct {
 	dto.PageInfo

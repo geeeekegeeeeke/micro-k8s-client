@@ -2,14 +2,14 @@ package v1
 
 import (
 	"fmt"
-	"gin-dubbogo-consumer/constant"
-	"gin-dubbogo-consumer/dto"
+	"micro-k8s-client/constant"
+	"micro-k8s-client/dto"
 	"strconv"
 
-	//_ "gin-dubbogo-consumer/dto"
+	//_ "micro-k8s-client/dto"
 	//"github.com/1Panel-dev/1Panel/backend/app/api/v1/helper"
 
-	//"gin-dubbogo-consumer/dto/request"
+	//"micro-k8s-client/dto/request"
 	"github.com/gin-gonic/gin"
 )
 

@@ -2,11 +2,11 @@ package main
 
 import (
 	"encoding/json"
-	"gin-dubbogo-consumer/init/db"
-	"gin-dubbogo-consumer/init/migration"
-	"gin-dubbogo-consumer/init/routers"
 	"github.com/gin-gonic/gin"
 	"gitlab.stagingvip.net/publicGroup/public/common"
+	"micro-k8s-client/init/db"
+	"micro-k8s-client/init/migration"
+	"micro-k8s-client/init/routers"
 )
 
 func main() {

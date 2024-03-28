@@ -1,6 +1,6 @@
 package service
 
-import "gin-dubbogo-consumer/repo"
+import "micro-k8s-client/repo"
 
 func init() {
 	commonRepo = repo.NewCommonRepo()

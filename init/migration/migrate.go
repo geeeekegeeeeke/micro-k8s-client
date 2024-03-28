@@ -1,10 +1,10 @@
 package migration
 
 import (
-	"gin-dubbogo-consumer/global"
-	"gin-dubbogo-consumer/init/migration/migrations"
 	"github.com/go-gormigrate/gormigrate/v2"
 	"log"
+	"micro-k8s-client/global"
+	"micro-k8s-client/init/migration/migrations"
 )
 
 func Init() {

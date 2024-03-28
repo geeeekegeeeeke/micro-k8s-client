@@ -1,7 +1,7 @@
 package dnc
 
 import (
-	"gin-dubbogo-consumer/util"
+	"micro-k8s-client/util"
 
 	hessian "github.com/apache/dubbo-go-hessian2"
 	"github.com/apache/dubbo-go/config"

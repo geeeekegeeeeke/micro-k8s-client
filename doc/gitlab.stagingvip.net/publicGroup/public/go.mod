@@ -21,4 +21,5 @@ require (
 )
 
 //replace gitlab.stagingvip.net/publicGroup/public => D:\workspace\gitlab.stagingvip.net\publicGroup\public
-replace gitlab.stagingvip.net/publicGroup/public => D:/go-project/dubbo-go-demo-comsumer/doc/gitlab.stagingvip.net/publicGroup/public
+replace gitlab.stagingvip.net/publicGroup/public => 。。/doc/gitlab.stagingvip.net/publicGroup/public
+//replace gitlab.stagingvip.net/publicGroup/public => D:/go-project/micro-k8s-client/doc/gitlab.stagingvip.net/publicGroup/public

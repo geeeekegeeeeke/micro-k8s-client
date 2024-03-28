@@ -2,11 +2,11 @@ package service
 
 import (
 	"fmt"
-	"gin-dubbogo-consumer/constant"
-	"gin-dubbogo-consumer/dto"
-	"gin-dubbogo-consumer/model"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
+	"micro-k8s-client/constant"
+	"micro-k8s-client/dto"
+	"micro-k8s-client/model"
 )
 
 type IK8sClusterService interface {

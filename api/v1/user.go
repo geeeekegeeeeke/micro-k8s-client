@@ -15,8 +15,8 @@ package v1
  *
  */
 import (
-	"gin-dubbogo-consumer/filter"
-	"gin-dubbogo-consumer/service"
+	"micro-k8s-client/filter"
+	"micro-k8s-client/service"
 
 	"github.com/gin-gonic/gin"
 )

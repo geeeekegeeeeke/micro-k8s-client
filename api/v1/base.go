@@ -2,7 +2,7 @@ package v1
 
 import (
 	"fmt"
-	"gin-dubbogo-consumer/exception"
+	"micro-k8s-client/exception"
 )
 
 type BaseController struct{}

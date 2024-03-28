@@ -1,8 +1,8 @@
 package repo
 
 import (
-	"gin-dubbogo-consumer/global"
-	"gin-dubbogo-consumer/model"
+	"micro-k8s-client/global"
+	"micro-k8s-client/model"
 )
 
 type ImageRepoRepo struct{}

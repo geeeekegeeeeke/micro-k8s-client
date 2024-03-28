@@ -1,6 +1,6 @@
 package dto
 
-import "gin-dubbogo-consumer/model"
+import "micro-k8s-client/model"
 
 type ClusterCreate struct {
 	ID   uint   `json:"id"`

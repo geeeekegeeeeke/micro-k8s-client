@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	"gin-dubbogo-consumer/exception"
-	dnc "gin-dubbogo-consumer/registry/dnc/app"
+	"micro-k8s-client/exception"
+	dnc "micro-k8s-client/registry/dnc/app"
 )
 
 /**

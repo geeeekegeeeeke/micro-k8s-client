@@ -2,9 +2,9 @@ package db
 
 import (
 	"fmt"
-	"gin-dubbogo-consumer/global"
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
+	"micro-k8s-client/global"
 	"os"
 	"time"
 )

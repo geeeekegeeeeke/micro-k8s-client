@@ -1,6 +1,6 @@
 package v1
 
-import "gin-dubbogo-consumer/service"
+import "micro-k8s-client/service"
 
 type ApiGroup struct {
 	BaseApi
