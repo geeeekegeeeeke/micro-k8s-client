@@ -3,8 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"log"
+	
 )
 
 func main2() {
@@ -69,30 +68,9 @@ func main2() {
 }
 
 func main() {
-	//jsonData := `{
-	//	"results": [
-	//		{
-	//			"source": {
-	//				"path": "/src/go.mod",
-	//				"type": "lockfile"
-	//			},
-	//			"packages": [
-	//				{
-	//					"package": {
-	//						"name": "stdlib",
-	//						"version": "1.20.10\n",
-	//						"ecosystem": "Go",
-	//						"commit": ""
-	//					},
-	//					"vulnerabilities": [
-	//
-	//					]
-	//				}
-	//			]
-	//		}
-	//	]
-	//}`
-
+	//"fmt"
+	//"io/ioutil"
+	//"log"
 	jsonData, err := ioutil.ReadFile("scan-results.json")
 	if err != nil {
 		log.Fatal(err)
