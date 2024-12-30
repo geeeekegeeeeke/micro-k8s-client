@@ -69,13 +69,7 @@ func main2() {
 }
 
 func main() {
-	//jsonData := `{
-	//	"results": [
-	//		{
-	//			"source": {
-	//				"path": "/src/go.mod",
-	//				"type": "lockfile"
-	//			},
+	
 	//			"packages": [
 	//				{
 	//					"package": {
@@ -197,4 +191,11 @@ func main3() {
 	}
 	// 打印解析后的 JSON 数据
 	fmt.Println(string(raw))
+	
+	fmt.Println(string(raw))
+	
+	fmt.Println(string(raw))
+	
+	fmt.Println(string(raw))
+	
 }
